@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的扫雷</title>
+  <link rel="stylesheet" href="css/index.css">
+  <script src="js/game.js"></script>
+  <script src="js/component.js"></script>
+</head>
+
+<body>
+  <table class="level">
+    <tr>
+      <td class="inc">&lt;</td>
+      <td class="label">初级</td>
+      <td class="dec">&gt;</td>
+    </tr>
+  </table>
+  <table class="menu">
+    <tr>
+      <td class="time" id="time">00:00</td>
+      <td class="reset">重来</td>
+      <td class="count" id="count">000</td>
+    </tr>
+  </table>
+  <div style="clear:left"></div>
+  <table class="map" id="game-map">
+  </table>
+  <div class="flag-btn" id="flag-btn">
+    标记
+  </div>
+</body>
+<script>
+  // 操作模式 0-翻开 1-标记
+  let operation = 0
+
+  let flagBtn = document.getElementById('flag-btn')
+  flagBtn.onclick = function() {
+    if (operation === 1) {
+      operation = 0
+      flagBtn.classList.remove('flag-btn-active')
+    } else {
+      operation = 1
+      flagBtn.classList.add('flag-btn-active')
+    }
+  }
+
+  let game = Game(1)
+  let gameBody = document.getElementById('game-map')
+  let countElement = document.getElementById('count')
+  countElement.innerText = game.params.count
+
+  let gameMap = []
+  for (let i = 0; i < game.params.row; ++i) {
+    let tr = document.createElement('tr')
+    gameMap[i] = []
+
+    for (let j = 0; j < game.params.col; ++j) {
+      let td = document.createElement('td')
+      gameMap[i][j] = td
+
+      td.onclick = function() {
+        if (game.params.state != 0) {
+          return
+        }
+        switch (operation) {
+          case 1:
+            game.flag(i, j)
+            break;
+          default:
+            game.openBlock(i, j)
+            break
+        }
+
+        if (game.params.state != 0)
+          clearInterval(interval)
+
+        let result = game.get()
+        for (let r of result) {
+          switch (r[2]) {
+            case 11:
+              gameMap[r[0]][r[1]].style.backgroundColor = 'red'
+              break
+            case 10:
+              gameMap[r[0]][r[1]].style.backgroundColor = '#00000070'
+              break
+            case 0:
+              gameMap[r[0]][r[1]].style.backgroundColor = '#ffffff70'
+              break
+            default:
+              gameMap[r[0]][r[1]].innerText = r[2]
+              gameMap[r[0]][r[1]].style.backgroundColor = '#ffffff70'
+              gameMap[r[0]][r[1]].style.color = 'blue'
+              break
+          }
+        }
+        countElement.innerText = game.params.count
+      }
+      tr.appendChild(td)
+    }
+    gameBody.appendChild(tr)
+  }
+
+  let timer = Timer()
+  let interval = setInterval(function() {
+    document.getElementById('time').innerText = timer.run()
+  }, 1000)
+</script>
+
+</html>
