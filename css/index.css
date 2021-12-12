@@ -19,14 +19,14 @@ body {
 .inc,
 .dec {
   width: 50px;
-  background-color: #00000070;
+  background-color: rgba(0,0,0,0.7);
   /* border-radius: 50%; */
 }
 
 .label {
   width: 180px;
   height: 50px;
-  background-color: #00000070;
+  background-color: rgba(0,0,0,0.7);
 }
 
 .menu {
@@ -38,13 +38,13 @@ body {
 .time,
 .count {
   width: 100px;
-  background-color: #00000070;
+  background-color: rgba(0,0,0,0.7);
 }
 
 .reset {
   width: 80px;
   height: 35px;
-  background-color: #00000070;
+  background-color: rgba(0,0,0,0.7);
 }
 
 .map {
@@ -53,11 +53,11 @@ body {
 }
 
 .map td {
-  border: 2px solid #FFFFFF70;
+  background-color: rgba(255,255,255,0.7);
   padding: 0;
   width: 28px;
   height: 28px;
-  background-color: #00000070;
+  background-color: rgba(0,0,0,0.7);
 }
 
 .flag-btn {
