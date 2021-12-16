@@ -19,14 +19,14 @@ body {
 .inc,
 .dec {
   width: 50px;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   /* border-radius: 50%; */
 }
 
 .label {
   width: 180px;
   height: 50px;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .menu {
@@ -38,32 +38,37 @@ body {
 .time,
 .count {
   width: 100px;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .reset {
   width: 80px;
   height: 35px;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .map {
   border-collapse: collapse;
   margin: auto;
+  margin-bottom: 70px;
 }
 
 .map td {
-  border: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.7);
   padding: 0;
   width: 28px;
   height: 28px;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .flag-btn {
   height: 50px;
   background-color: rgba(32, 207, 140, 0.5);
-  margin: 10px;
+  position: fixed;
+  bottom: 10px;
+  width: 90%;
+  height: 43px;
+  margin-left: 5%;
   line-height: 47px;
 }
 
