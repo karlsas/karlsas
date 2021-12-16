@@ -2,7 +2,7 @@
  * 难度控制
  */
 function LevelConfig() {
-  let level = 0
+  let level = 1
 
   /**
    * 增加难度
