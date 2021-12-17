@@ -11,28 +11,30 @@ body {
 }
 
 .level {
-  margin: auto;
-  margin-top: 10px;
   border-spacing: 5px;
+  position: fixed;
+  margin-left: 5%;
+  top: 5px;
+  width: 90%;
 }
 
 .inc,
 .dec {
   width: 50px;
   background-color: rgba(0, 0, 0, 0.7);
-  /* border-radius: 50%; */
 }
 
 .label {
-  width: 180px;
   height: 50px;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
 .menu {
-  margin: auto;
-  margin-bottom: 5px;
   border-spacing: 5px;
+  position: fixed;
+  margin-left: 5%;
+  top: 60px;
+  width: 90%;
 }
 
 .time,
@@ -42,22 +44,25 @@ body {
 }
 
 .reset {
-  width: 80px;
   height: 35px;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
+.reset:hover {
+  background-color: red;
+}
+
 .map {
   border-collapse: collapse;
-  margin: auto;
-  margin-bottom: 70px;
+  width: 90%;
+  margin: 110px 5% 65px 5%;
 }
 
 .map td {
   border: 2px solid rgba(255, 255, 255, 0.7);
   padding: 0;
-  width: 28px;
-  height: 28px;
+  width: 8%;
+  height: 8.5vw;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -77,4 +82,39 @@ body {
   color: red;
   font-size: 20px;
   font-weight: bold;
+}
+
+.hide {
+  display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .map {
+    border-collapse: collapse;
+    width: 500px;
+    margin: 110px auto 70px auto;
+  }
+  .map td {
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .menu {
+    border-spacing: 5px;
+    position: fixed;
+    top: 60px;
+    margin-left: 50%;
+    width: 500px;
+    transform: translateX(-50%);
+  }
+  .level {
+    border-spacing: 5px;
+    position: fixed;
+    margin-left: 50%;
+    top: 5px;
+    width: 500px;
+    transform: translateX(-50%);
+  }
 }
