@@ -1,32 +1,4 @@
 /**
- * 难度控制
- */
-function LevelConfig() {
-  let level = 1
-
-  /**
-   * 增加难度
-   */
-  function inc() {
-    if (++level > 2) level = 0
-    return level
-  }
-
-  /**
-   * 降低难度
-   */
-  function dec() {
-    if (--level < 0) level = 2
-    return level
-  }
-
-  return {
-    inc,
-    dec
-  }
-}
-
-/**
  * 计时器
  */
 function Timer() {

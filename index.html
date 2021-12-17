@@ -26,7 +26,6 @@
       <td class="count" id="count">000</td>
     </tr>
   </table>
-  <div style="clear:left"></div>
   <table class="map" id="game-map">
   </table>
   <div class="flag-btn" id="flag-btn">
@@ -34,35 +33,44 @@
   </div>
 </body>
 <script>
-  let levelConfig = LevelConfig()
-  let level = 1
-  newGame(level)
-  document.getElementById('inc-btn').onclick = function() {
-    level = levelConfig.inc()
-    let levelName = {
-      0: "初级",
-      1: '中级',
-      2: '高级',
+  let interval
+  let gameBody = document.getElementById('game-map')
+
+  let countElement = document.getElementById('count')
+  let show = 0
+  countElement.onclick = function() {
+    if (show == 1) {
+      gameBody.classList.add('hide')
+      countElement.innerText = '显示'
+      show = 2
+    } else if (show == 2) {
+      gameBody.classList.remove('hide')
+      countElement.innerText = '隐藏'
+      show = 1
     }
-    document.getElementById('level-label').innerText = levelName[level]
-    newGame(level)
+  }
+
+  let level = 1
+  let levelName = {
+    0: "初级",
+    1: '中级',
+    2: '高级',
+  }
+  newGame()
+  document.getElementById('inc-btn').onclick = function() {
+    if (++level > 2) level = 0
+    newGame()
   }
   document.getElementById('dec-btn').onclick = function() {
-    level = levelConfig.dec()
-    let levelName = {
-      0: "初级",
-      1: '中级',
-      2: '高级',
-    }
-    document.getElementById('level-label').innerText = levelName[level]
-    newGame(level)
+    if (--level < 0) level = 2
+    newGame()
   }
   document.getElementById('reset-game').onclick = function() {
-      newGame(level)
-    }
-    // 操作模式 0-翻开 1-标记
-  let operation = 0
+    newGame()
+  }
 
+  // 操作模式 0-翻开 1-标记
+  let operation = 0
   let flagBtn = document.getElementById('flag-btn')
   flagBtn.onclick = function() {
     if (operation === 1) {
@@ -73,18 +81,20 @@
       flagBtn.classList.add('flag-btn-active')
     }
   }
-  var interval
 
-  function newGame(level = 0) {
+  function newGame() {
+    show = 0
+    document.getElementById('level-label').innerText = levelName[level]
+
     document.body.style.backgroundImage = `url(img/nt${level + 1}.jpg)`
+
     clearInterval(interval)
-    let game = Game(level)
-    let gameBody = document.getElementById('game-map')
-    gameBody.innerHTML = ''
     document.getElementById('time').innerText = '00:00'
-    let countElement = document.getElementById('count')
+
+    let game = Game(level)
     countElement.innerText = game.params.count
 
+    gameBody.innerHTML = ''
     let gameMap = []
     for (let i = 0; i < game.params.row; ++i) {
       let tr = document.createElement('tr')
@@ -106,9 +116,15 @@
               game.openBlock(i, j)
               break
           }
+          countElement.innerText = game.params.count
 
           if (game.params.state != 0) {
             clearInterval(interval)
+            if (game.params.state == 2) {
+              countElement.innerText = '显示'
+              gameBody.classList.add('hide')
+              show = 2
+            }
             alert(game.params.state == 1 ? '失败' : "胜利")
           }
 
@@ -124,6 +140,12 @@
               case 0:
                 gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(255,255,255,0.7)'
                 break
+              case 9:
+                gameMap[r[0]][r[1]].innerText = r[2]
+                gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(255,255,255,0.7)'
+                gameMap[r[0]][r[1]].style.color = 'red'
+                gameMap[r[0]][r[1]].style.fontWeight = 'blod'
+                break
               default:
                 gameMap[r[0]][r[1]].innerText = r[2]
                 gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(255,255,255,0.7)'
@@ -131,7 +153,6 @@
                 break
             }
           }
-          countElement.innerText = game.params.count
         }
         tr.appendChild(td)
       }
