@@ -1,5 +1,5 @@
 body {
-  background-image: url(../img/nt3.jpg);
+  background-image: url(../img/nt2.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -50,10 +50,11 @@ body {
 .map {
   border-collapse: collapse;
   margin: auto;
+  margin-bottom: 70px;
 }
 
 .map td {
-  border: 2px solid #FFFFFF70;
+  border: 2px solid rgba(255, 255, 255, 0.7);
   padding: 0;
   width: 28px;
   height: 28px;
@@ -63,7 +64,11 @@ body {
 .flag-btn {
   height: 50px;
   background-color: rgba(32, 207, 140, 0.5);
-  margin: 10px;
+  position: fixed;
+  bottom: 10px;
+  width: 90%;
+  height: 43px;
+  margin-left: 5%;
   line-height: 47px;
 }
 
