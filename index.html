@@ -95,6 +95,7 @@
     countElement.innerText = game.params.count
 
     gameBody.innerHTML = ''
+    gameBody.classList.remove('hide')
     let gameMap = []
     for (let i = 0; i < game.params.row; ++i) {
       let tr = document.createElement('tr')
