@@ -8,22 +8,32 @@ function Game(level = 0) {
     case 1:
       params.row = 15
       params.col = 10
-      params.mine = 15
+      params.mine = 16
       break
     case 2:
       params.row = 20
       params.col = 10
-      params.mine = 20
+      params.mine = 22
       break
     case 3:
       params.row = 40
       params.col = 10
-      params.mine = 40
+      params.mine = 45
       break
     case 4:
       params.row = 80
       params.col = 10
-      params.mine = 80
+      params.mine = 92
+      break
+    case 5:
+      params.row = 160
+      params.col = 10
+      params.mine = 190
+      break
+    case 6:
+      params.row = 320
+      params.col = 10
+      params.mine = 384
       break
     default:
       params.row = params.col = params.mine = 10

@@ -12,18 +12,33 @@
 </head>
 
 <body>
-  <table class="level">
+  <table class="info">
     <tr>
-      <td class="dec" id="dec-btn">&lt;</td>
-      <td class="label" id="level-label">中级</td>
-      <td class="inc" id="inc-btn">&gt;</td>
+      <td>难度</td>
+      <td id="level-label">中级</td>
+      <td rowspan=""><a id="about">关于</a></td>
+      <td rowspan="2" style="max-width: 20px;"><button class="dec" id="dec-btn">&lt;</button></td>
+      <td rowspan="2" style="max-width: 20px;"><button class="inc" id="inc-btn">&gt;</button></td>
     </tr>
-  </table>
-  <table class="menu">
     <tr>
-      <td class="time" id="time">00:00</td>
-      <td class="reset" id="reset-game">重来</td>
-      <td class="count" id="count">000</td>
+      <td>宽高</td>
+      <td id="w-h">10-15</td>
+      <td rowspan=""><a id="help">帮助</a></td>
+    </tr>
+    <tr>
+      <td>雷</td>
+      <td id="mine-num" colspan="2">15个(10%)</td>
+      <td rowspan="3" colspan="2" style="max-width: 60px;"><button class="reset" id="reset-game">重来</button></td>
+    </tr>
+    <tr>
+      <td>时间</td>
+      <td id="time">00:00</td>
+      <td><a id="proposal">建议</a></td>
+    </tr>
+    <tr>
+      <td>剩余</td>
+      <td id="count">135</td>
+      <td><a id="more">更多</a></td>
     </tr>
   </table>
   <table class="map" id="game-map">
@@ -33,6 +48,18 @@
   </div>
 </body>
 <script>
+  document.getElementById('about').onclick = function() {
+    alert('+ 背景图来自 小红书平台 小白兔奶糖 小红书号 742635074 的作品。若侵权请联系 2217985811@qq.com 删除')
+  }
+  document.getElementById('help').onclick = function() {
+    alert('+ 数字代表周围一圈8个方块有多少个雷\n+ 数字9代表雷\n+ 当周围被标记的方块个数与中间的数字相等时，点击数字可以快速将周围未被标记的方块打开')
+  }
+  document.getElementById('proposal').onclick = function() {
+    alert('+ 可联系 2217985811@qq.com\n+ 不定期更新')
+  }
+  document.getElementById('more').onclick = function() {
+    alert('敬请期待')
+  }
   let interval
   let gameBody = document.getElementById('game-map')
 
@@ -50,15 +77,26 @@
     }
   }
 
+  let bg = [
+    'img/nt1.jpg',
+    'img/nt2.jpg',
+    'img/nt3.jpg',
+    'img/nt4.jpg',
+    'img/nt5.jpg',
+    'img/nt6.jpg',
+    'img/nt7.jpg',
+  ];
   let level = 1
-  let levelName = {
-    0: "初级",
-    1: '中级',
-    2: '高级',
-    3: '进阶',
-    4: '大师',
-  }
-  let maxLevel = 4;
+  let levelName = [
+    "初级",
+    '中级',
+    '高级',
+    '进阶',
+    '大师',
+    '宗师',
+    '王者',
+  ]
+  let maxLevel = 6;
   console.log(levelName.length)
   newGame()
   document.getElementById('inc-btn').onclick = function() {
@@ -90,13 +128,17 @@
     show = 0
     document.getElementById('level-label').innerText = levelName[level]
 
-    document.body.style.backgroundImage = `url(img/nt${level + 1}.jpg)`
+    document.body.style.backgroundImage = `url(${bg[level]})`
 
     clearInterval(interval)
     document.getElementById('time').innerText = '00:00'
 
     let game = Game(level)
     countElement.innerText = game.params.count
+
+    document.getElementById('w-h').innerText = `${game.params.col}-${game.params.row}`
+    let mine_rate = game.params.mine / (game.params.row * game.params.col) * 100
+    document.getElementById('mine-num').innerText = `${game.params.mine} (${mine_rate.toFixed(2)}%)`
 
     gameBody.innerHTML = ''
     gameBody.classList.remove('hide')
