@@ -15,6 +15,16 @@ function Game(level = 0) {
       params.col = 10
       params.mine = 20
       break
+    case 3:
+      params.row = 40
+      params.col = 10
+      params.mine = 40
+      break
+    case 4:
+      params.row = 80
+      params.col = 10
+      params.mine = 80
+      break
     default:
       params.row = params.col = params.mine = 10
   }
