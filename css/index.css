@@ -8,9 +8,12 @@ body {
   margin: 0;
   text-align: center;
   color: white;
+  font-size: 15px;
 }
 
 .info {
+  padding: 5px;
+  height: 130px;
   top: 5px;
   margin-left: 5%;
   width: 90%;
@@ -25,7 +28,7 @@ body {
 .inc,
 .dec {
   width: 45px;
-  font-size: 48px;
+  font-size: 35px;
   color: white;
   border-radius: 5px;
   border: 0;
