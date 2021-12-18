@@ -55,14 +55,18 @@
     0: "初级",
     1: '中级',
     2: '高级',
+    3: '进阶',
+    4: '大师',
   }
+  let maxLevel = 4;
+  console.log(levelName.length)
   newGame()
   document.getElementById('inc-btn').onclick = function() {
-    if (++level > 2) level = 0
+    if (++level > maxLevel) level = 0
     newGame()
   }
   document.getElementById('dec-btn').onclick = function() {
-    if (--level < 0) level = 2
+    if (--level < 0) level = maxLevel
     newGame()
   }
   document.getElementById('reset-game').onclick = function() {
@@ -95,6 +99,7 @@
     countElement.innerText = game.params.count
 
     gameBody.innerHTML = ''
+    gameBody.classList.remove('hide')
     let gameMap = []
     for (let i = 0; i < game.params.row; ++i) {
       let tr = document.createElement('tr')
