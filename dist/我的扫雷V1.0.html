@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的扫雷</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    
+    html {
+      height: 100%;
+    }
+    
+    body {
+      background-color: #E6E6E6;
+      display: table-cell;
+      vertical-align: middle;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    .body {
+      margin: auto;
+      width: 320px;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    .body button {
+      float: right;
+      width: 50px;
+      height: 25px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #007ACC;
+    }
+    
+    .map {
+      width: 300px;
+      height: 300px;
+      background-color: white;
+    }
+    
+    .map td {
+      background-color: #4169E1;
+      text-align: center;
+      width: 28px;
+      height: 28px;
+    }
+    
+    .info {
+      height: 25px;
+      font-size: 18px;
+      padding: 5px 10px;
+      margin-bottom: 2px;
+      background-color: #40E0D0;
+    }
+    
+    .left {
+      width: 75%;
+      float: left;
+    }
+    
+    .setting {
+      position: relative;
+      bottom: 0;
+    }
+    
+    .skills {
+      list-style: none;
+      width: 300px;
+      margin-top: 2px;
+    }
+    
+    .skills li {
+      width: 75px;
+      height: 75px;
+      float: left;
+      text-align: center;
+      line-height: 73px;
+      box-sizing: border-box;
+      border: 1px solid #E6E6E6;
+      background-color: #40E0D0;
+    }
+    
+    .skills li.active {
+      border: 2px solid #34DD38;
+      line-height: 71px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="body">
+    <div class="info">
+      <div class="left">
+        <label>时间</label>
+        <span class="time-count">00:00</span> &nbsp;
+        <label>方块</label>
+        <span class="block-count">90</span>
+      </div>
+      <button class="setting" onclick="window.location.reload();">重置</button>
+    </div>
+    <table class="map">
+      <script>
+        for (let i = 0; i < 10; ++i) {
+          document.write(`<tr>`)
+          for (let j = 0; j < 10; ++j) {
+            document.write(`<td onclick=""></td>`)
+          }
+          document.write(`</tr>`)
+        }
+      </script>
+    </table>
+    <ul class="skills">
+      <li>翻开</li>
+      <li>标记</li>
+      <li>提示x<span class="skill-num" id="check-num">2</span></li>
+      <li>敬请期待</li>
+    </ul>
+  </div>
+</body>
+
+<script>
+  {
+    var currentSkill = 0
+    let skillDomList = document.querySelectorAll('.skills li')
+
+    skillDomList[currentSkill].classList.add('active')
+
+    for (let skill = 0; skill < skillDomList.length; ++skill) {
+      skillDomList[skill].onclick = function() {
+        if (currentSkill == skill) return
+        skillDomList[currentSkill].classList.remove('active')
+        skillDomList[skill].classList.add('active')
+        currentSkill = skill
+      }
+    }
+  } {
+    let time = '00:00',
+      m1 = 0,
+      m2 = 0,
+      s1 = 0,
+      s2 = 0
+
+    let timeDom = document.querySelector('.time-count')
+    timeDom.innerHTML = time
+
+    let countTime = function() {
+      ++s2
+      if (s2 == 10) {
+        s2 = 0;
+        ++s1
+        if (s1 == 6) {
+          s1 = 0;
+          ++m2
+          if (m2 == 10) {
+            m2 = 0;
+            ++m1
+          }
+        }
+      }
+      timeDom.innerHTML = `${m1}${m2}:${s1}${s2}`
+    }
+    var timeInterval = setInterval(countTime, 1000)
+  } {
+    var map = newGame(10, 10, 10);
+    var block_count = 90;
+    var fail = false;
+    var check_num = 2;
+
+    // 初始化游戏
+    function newGame(row, col, mine) {
+      let map = [];
+      for (let i = 0; i < row; ++i) {
+        map[i] = [];
+        for (let j = 0; j < col; ++j) {
+          map[i][j] = 10;
+        }
+      }
+      let i = mine;
+      while (i) {
+        let x = Math.floor(Math.random() * row);
+        let y = Math.floor(Math.random() * col);
+        if (map[x][y] != 19) {
+          --i;
+          map[x][y] = 19;
+          for (let m = x - 1; m <= x + 1; ++m) {
+            for (let n = y - 1; n <= y + 1; ++n) {
+              if (m >= 0 && n >= 0 && m < row && n < col && map[m][n] != 19) {
+                ++map[m][n]
+              }
+            }
+          }
+        }
+      }
+      return map
+    }
+
+    // 打开方块
+    function open(x, y) {
+      let row = map.length,
+        col = map[0].length
+
+      if (map[x][y] < 10) return dopen(x, y)
+
+      if (map[x][y] >= 20) return -1
+
+      map[x][y] %= 10
+      if (map[x][y] == 9) {
+        fail = true
+        return -2;
+      }
+
+      --block_count;
+
+      if (map[x][y] == 0) {
+        let stack = [
+          [x, y]
+        ]
+        while (stack.length) {
+          let [i, j] = stack.pop()
+          for (let m = i - 1; m <= i + 1; ++m) {
+            for (let n = j - 1; n <= j + 1; ++n) {
+              if (m >= 0 && n >= 0 && m < row && n < col && map[m][n] >= 10) {
+                map[m][n] %= 10;
+                --block_count;
+                if (map[m][n] == 0) {
+                  stack.push([m, n])
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 标记方块
+    function flag(x, y) {
+      if (map[x][y] < 10) return -1
+      if (map[x][y] < 20) {
+        map[x][y] += 10
+      } else {
+        map[x][y] -= 10
+      }
+    }
+
+    // 双击打开方块
+    function dopen(x, y) {
+      if (map[x][y] == 0 || map[x][y] >= 10) return -1
+      let count = 0,
+        openList = [],
+        row = map.length,
+        col = map[0].length
+      for (let m = x - 1; m <= x + 1; ++m) {
+        for (let n = y - 1; n <= y + 1; ++n) {
+          if (m >= 0 && n >= 0 && m < row && n < col) {
+            if (map[m][n] >= 20 || map[m][n] == 9) {
+              ++count
+            } else if (map[m][n] >= 10) {
+              openList.push([m, n])
+            }
+          }
+        }
+      }
+      if (count != map[x][y]) return -1
+      for ([m, n] of openList) {
+        if (open(m, n) == -2) {
+          return
+        }
+      }
+    }
+
+    // 检测方块
+    function check(x, y) {
+      if (map[x][y] < 10 || map[x][y] >= 20 || check_num == 0) return -1
+      if (map[x][y] == 19) {
+        flag(x, y)
+      } else {
+        open(x, y)
+      }
+      --check_num
+    }
+  } {
+    let blockDomList = document.querySelectorAll('.map td'),
+      blockCountDom = document.querySelector('.block-count'),
+      checkNumDom = document.getElementById('check-num'),
+      row = map.length,
+      col = map[0].length
+
+    checkNumDom.innerHTML = check_num
+    for (let i = 0; i < blockDomList.length; ++i) {
+      blockDomList[i].onclick = function() {
+        if (block_count == 0 || fail) return
+        let x = Math.floor(i / row),
+          y = i % row
+        switch (currentSkill) {
+          case 0:
+            r = open(x, y)
+            break
+          case 1:
+            r = flag(x, y)
+            break
+          case 2:
+            r = check(x, y)
+            break
+        }
+        if (r != -1)
+          refresh()
+      }
+    }
+
+    function refresh() {
+      for (let i = 0; i < row; ++i) {
+        for (let j = 0; j < col; ++j) {
+          index = i * row + j;
+          if (map[i][j] < 10) {
+            blockDomList[index].style.backgroundColor = '#06A3D7'
+            if (map[i][j] == 9) {
+              blockDomList[index].innerHTML = '雷'
+            } else if (map[i][j] == 0) {
+              blockDomList[index].innerHTML = ''
+            } else {
+              blockDomList[index].innerHTML = map[i][j]
+            }
+
+            if (map[i][j] < 3) {
+              blockDomList[index].style.color = 'black'
+            } else if (map[i][j] < 6) {
+              blockDomList[index].style.color = 'yellow'
+            } else {
+              blockDomList[index].style.color = 'red'
+            }
+          } else if (map[i][j] >= 20 || block_count == 0) {
+            blockDomList[index].style.backgroundColor = 'red'
+          }
+        }
+      }
+      blockCountDom.innerHTML = block_count
+      checkNumDom.innerHTML = check_num
+      if (block_count == 0) {
+        clearInterval(timeInterval)
+        alert('胜利了！你真棒！')
+      } else if (fail) {
+        clearInterval(timeInterval)
+        alert('失败了！再接再厉！')
+      }
+    }
+  }
+</script>
+
+</html>
