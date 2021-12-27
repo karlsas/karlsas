@@ -14,31 +14,36 @@
 <body>
   <table class="info">
     <tr>
-      <td>难度</td>
+      <td style="width: 40px;">难度</td>
       <td id="level-label">中级</td>
-      <td rowspan=""><a id="about">关于</a></td>
-      <td rowspan="2" style="max-width: 20px;"><button class="dec" id="dec-btn">&lt;</button></td>
-      <td rowspan="2" style="max-width: 20px;"><button class="inc" id="inc-btn">&gt;</button></td>
+      <td rowspan="2" style="width: 45px;"><button class="reset" id="ranking">最佳<br>排行</button></td>
+      <td rowspan="2" style="width: 40px;">
+        <a class="dec" id="dec-btn"></a>
+      </td>
+      <td rowspan="2" style="width: 40px;">
+        <a class="inc" id="inc-btn"></a>
+      </td>
     </tr>
     <tr>
       <td>宽高</td>
       <td id="w-h">10-15</td>
-      <td rowspan=""><a id="help">帮助</a></td>
     </tr>
     <tr>
       <td>雷</td>
-      <td id="mine-num" colspan="2">15个(10%)</td>
-      <td rowspan="3" colspan="2" style="max-width: 60px;"><button class="reset" id="reset-game">重来</button></td>
+      <td id="mine-num">15个(10%)</td>
+      <td rowspan="2"><button class="reset" id="record">历史<br>战绩</button></td>
+      <td colspan="2" rowspan="2"><button class="reset" id="reset-game">重来</button></td>
     </tr>
     <tr>
       <td>时间</td>
       <td id="time">00:00</td>
-      <td><a id="proposal">建议</a></td>
     </tr>
     <tr>
       <td>剩余</td>
       <td id="count">135</td>
-      <td><a id="more">更多</a></td>
+      <td><button class="reset" id="more">更多</button></td>
+      <td><button class="reset" id="about">关于</button></td>
+      <td><button class="reset" id="help">帮助</button></td>
     </tr>
   </table>
   <table class="map" id="game-map">
@@ -52,13 +57,22 @@
     alert('+ 背景图来自 小红书平台 小白兔奶糖 小红书号 742635074 的作品。若侵权请联系 2217985811@qq.com 删除')
   }
   document.getElementById('help').onclick = function() {
-    alert('+ 数字代表周围一圈8个方块有多少个雷\n+ 数字9代表雷\n+ 当周围被标记的方块个数与中间的数字相等时，点击数字可以快速将周围未被标记的方块打开')
+      alert('+ 数字代表周围一圈8个方块有多少个雷\n+ 数字9代表雷\n+ 当周围被标记的方块个数与中间的数字相等时，点击数字可以快速将周围未被标记的方块打开')
+    }
+    // document.getElementById('proposal').onclick = function() {
+    //   alert('+ 可联系 2217985811@qq.com\n+ 不定期更新')
+    // }
+  document.getElementById('record').onclick = function() {
+    let game_record = JSON.parse(localStorage.getItem('game_record'))
+    console.log(game_record)
+    let text = `2021-12-23 入门   02:43  2230  胜利`
+    alert(text)
   }
-  document.getElementById('proposal').onclick = function() {
-    alert('+ 可联系 2217985811@qq.com\n+ 不定期更新')
+  document.getElementById('ranking').onclick = function() {
+    alert('+ 作者：林子\n+ 不定期更新')
   }
   document.getElementById('more').onclick = function() {
-    alert('敬请期待')
+    alert('+ 作者：林子\n+ 不定期更新')
   }
   let interval
   let gameBody = document.getElementById('game-map')
@@ -88,16 +102,15 @@
   ];
   let level = 1
   let levelName = [
-    "初级",
+    "小白",
+    '入门',
+    '初级',
     '中级',
     '高级',
     '进阶',
     '大师',
-    '宗师',
-    '王者',
   ]
-  let maxLevel = 6;
-  console.log(levelName.length)
+  let maxLevel = levelName.length - 1;
   newGame()
   document.getElementById('inc-btn').onclick = function() {
     if (++level > maxLevel) level = 0

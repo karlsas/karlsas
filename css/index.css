@@ -1,5 +1,4 @@
 body {
-  background-image: url(../img/nt2.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -25,23 +24,34 @@ body {
   max-width: 90px;
 }
 
-.inc,
 .dec {
-  width: 45px;
-  font-size: 35px;
-  color: white;
-  border-radius: 5px;
-  border: 0;
+  display: inline-block;
+  width: 0px;
+  height: 0px;
   padding: 0;
   margin: 0;
-  background-color: rgb(115, 209, 154);
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 0px solid transparent;
+  border-right: 30px solid rgb(27, 230, 162);
+}
+
+.inc {
+  display: inline-block;
+  width: 0px;
+  height: 0px;
+  padding: 0;
+  margin: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid rgb(27, 230, 162);
+  border-right: 0px solid transparent;
 }
 
 .reset {
-  width: 100px;
-  height: 50px;
-  border-radius: 5px;
-  font-size: 18px;
+  min-width: 40px;
+  border-radius: 2px;
+  font-size: 15px;
   color: white;
   border: 0;
   padding: 0;
@@ -51,6 +61,18 @@ body {
 
 .reset:hover {
   background-color: red;
+}
+
+#reset-game {
+  font-size: 18px;
+  width: 85px;
+  height: 40px;
+  background-color: rgb(226, 76, 38);
+}
+
+#record,
+#ranking {
+  height: 40px;
 }
 
 .map {
@@ -86,6 +108,20 @@ body {
 
 .hide {
   display: none;
+}
+
+.model {
+  width: 300px;
+  height: 500px;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.model td {
+  height: 30px;
 }
 
 @media screen and (min-width: 768px) {
