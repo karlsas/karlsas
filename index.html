@@ -41,7 +41,7 @@
     <tr>
       <td>剩余</td>
       <td id="count">135</td>
-      <td><button class="reset" id="more">更多</button></td>
+      <td><button class="reset" id="clear">清除</button></td>
       <td><button class="reset" id="about">关于</button></td>
       <td><button class="reset" id="help">帮助</button></td>
     </tr>
@@ -64,13 +64,18 @@
     let text = game_record.length ? game_record.join('\n') : '暂无历史记录'
     alert(text)
   }
-  let game_ranking = JSON.parse(localStorage.getItem('game_ranking')) || []
+  let game_ranking = JSON.parse(localStorage.getItem('game_ranking')) || {}
   document.getElementById('ranking').onclick = function() {
-    let text = game_ranking.length ? game_ranking.join('\n') : '暂无最佳排行'
-    alert(text)
+    let text = ''
+    for (let level_name in game_ranking) text += `${level_name} ${game_ranking[level_name]['count_time']} ${game_ranking[level_name]['date']}\n`
+    text ? alert(text) : alert('暂无最佳排行')
   }
-  document.getElementById('more').onclick = function() {
-    alert('+ 作者：林子\n+ 不定期更新')
+  document.getElementById('clear').onclick = function() {
+    if (confirm('确定要清除“最佳排行”和“历史战绩”数据吗？')) {
+      localStorage.clear()
+      game_ranking = {}
+      game_record = []
+    }
   }
   let interval
   let gameBody = document.getElementById('game-map')
@@ -178,13 +183,20 @@
 
           if (game.params.state != 0) {
             clearInterval(interval)
-            game_record.unshift(`${new Date().toLocaleDateString()}  ${levelName[level]}   ${document.getElementById('time').innerText}  ${game.params.count}  ${game.params.state == 1 ? '失败' : "胜利"}`)
+            let count_time = document.getElementById('time').innerText
+            game_record.unshift(`${new Date().toLocaleDateString()}  ${levelName[level]}   ${count_time}  ${game.params.count}  ${game.params.state == 1 ? '失败' : "胜利"}`)
             if (game_record.length > 50) game_record.length = 50
             localStorage.setItem('game_record', JSON.stringify(game_record))
             if (game.params.state == 2) {
               countElement.innerText = '显示'
               gameBody.classList.add('hide')
               show = 2
+              if (!(levelName[level] in game_ranking)) game_ranking[levelName[level]] = {}
+              if (!('count_time' in game_ranking[levelName[level]]) || game_ranking[levelName[level]]['count_time'] > count_time) {
+                game_ranking[levelName[level]]['count_time'] = count_time
+                game_ranking[levelName[level]]['date'] = new Date().toLocaleDateString()
+                localStorage.setItem('game_ranking', JSON.stringify(game_ranking))
+              }
             }
             alert(game.params.state == 1 ? '失败' : "胜利")
           }
