@@ -41,7 +41,7 @@
     <tr>
       <td>剩余</td>
       <td id="count">135</td>
-      <td><button class="reset" id="more">更多</button></td>
+      <td><button class="reset" id="clear">清除</button></td>
       <td><button class="reset" id="about">关于</button></td>
       <td><button class="reset" id="help">帮助</button></td>
     </tr>
@@ -57,22 +57,25 @@
     alert('+ 背景图来自 小红书平台 小白兔奶糖 小红书号 742635074 的作品。若侵权请联系 2217985811@qq.com 删除')
   }
   document.getElementById('help').onclick = function() {
-      alert('+ 数字代表周围一圈8个方块有多少个雷\n+ 数字9代表雷\n+ 当周围被标记的方块个数与中间的数字相等时，点击数字可以快速将周围未被标记的方块打开')
-    }
-    // document.getElementById('proposal').onclick = function() {
-    //   alert('+ 可联系 2217985811@qq.com\n+ 不定期更新')
-    // }
+    alert('+ 数字代表周围一圈8个方块有多少个雷\n+ 数字9代表雷\n+ 当周围被标记的方块个数与中间的数字相等时，点击数字可以快速将周围未被标记的方块打开')
+  }
+  let game_record = JSON.parse(localStorage.getItem('game_record')) || []
   document.getElementById('record').onclick = function() {
-    let game_record = JSON.parse(localStorage.getItem('game_record'))
-    console.log(game_record)
-    let text = `2021-12-23 入门   02:43  2230  胜利`
+    let text = game_record.length ? game_record.join('\n') : '暂无历史记录'
     alert(text)
   }
+  let game_ranking = JSON.parse(localStorage.getItem('game_ranking')) || {}
   document.getElementById('ranking').onclick = function() {
-    alert('+ 作者：林子\n+ 不定期更新')
+    let text = ''
+    for (let level_name in game_ranking) text += `${level_name} ${game_ranking[level_name]['count_time']} ${game_ranking[level_name]['date']}\n`
+    text ? alert(text) : alert('暂无最佳排行')
   }
-  document.getElementById('more').onclick = function() {
-    alert('+ 作者：林子\n+ 不定期更新')
+  document.getElementById('clear').onclick = function() {
+    if (confirm('确定要清除“最佳排行”和“历史战绩”数据吗？')) {
+      localStorage.clear()
+      game_ranking = {}
+      game_record = []
+    }
   }
   let interval
   let gameBody = document.getElementById('game-map')
@@ -180,10 +183,20 @@
 
           if (game.params.state != 0) {
             clearInterval(interval)
+            let count_time = document.getElementById('time').innerText
+            game_record.unshift(`${new Date().toLocaleDateString()}  ${levelName[level]}   ${count_time}  ${game.params.count}  ${game.params.state == 1 ? '失败' : "胜利"}`)
+            if (game_record.length > 50) game_record.length = 50
+            localStorage.setItem('game_record', JSON.stringify(game_record))
             if (game.params.state == 2) {
               countElement.innerText = '显示'
               gameBody.classList.add('hide')
               show = 2
+              if (!(levelName[level] in game_ranking)) game_ranking[levelName[level]] = {}
+              if (!('count_time' in game_ranking[levelName[level]]) || game_ranking[levelName[level]]['count_time'] > count_time) {
+                game_ranking[levelName[level]]['count_time'] = count_time
+                game_ranking[levelName[level]]['date'] = new Date().toLocaleDateString()
+                localStorage.setItem('game_ranking', JSON.stringify(game_ranking))
+              }
             }
             alert(game.params.state == 1 ? '失败' : "胜利")
           }
