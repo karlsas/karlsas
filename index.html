@@ -51,6 +51,25 @@
   <div class="flag-btn" id="flag-btn">
     标记
   </div>
+  <div class="modal" id="history-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-head">
+        <span class="back" onclick="document.getElementById('history-modal').style.display='none'"></span> 历史战绩
+      </div>
+      <ul class="list">
+      </ul>
+    </div>
+  </div>
+  <div class="modal" id="ranking-modal">
+    <div class="modal-content">
+      <div class="modal-head">
+        <span class="back" onclick="document.getElementById('ranking-modal').style.display='none'"></span> 最佳排行
+      </div>
+      <ul class="list">
+        <li>入门 <span class="label" style="margin-left: 20px;">00:27</span> <span style="float:right;">2022/04/24 22:14:00</span></li>
+      </ul>
+    </div>
+  </div>
 </body>
 <script>
   document.getElementById('about').onclick = function() {
@@ -61,24 +80,34 @@
   }
   let game_record = JSON.parse(localStorage.getItem('game_record')) || []
   document.getElementById('record').onclick = function() {
-    let text = game_record.length ? game_record.join('\n') : '暂无历史记录'
-    alert(text)
-  }
-  let game_ranking = JSON.parse(localStorage.getItem('game_ranking')) || {}
-  document.getElementById('ranking').onclick = function() {
-    let text = ''
-    for (let level_name in game_ranking) text += `${level_name} ${game_ranking[level_name]['count_time']} ${game_ranking[level_name]['date']}\n`
-    text ? alert(text) : alert('暂无最佳排行')
-  }
-  document.getElementById('clear').onclick = function() {
-    if (confirm('确定要清除“最佳排行”和“历史战绩”数据吗？')) {
-      localStorage.clear()
-      game_ranking = {}
-      game_record = []
-    }
+    let content = ''
+    game_record.forEach(element => {
+      content += `<li>
+          <div style="margin-bottom: 5px;">
+            ${element.date} <span style="margin-left: 20px;">${element.levelName}</span>
+            <span style="float: right; color: ${element.result == '失败' ? 'red' : 'green'}">${element.result}</span>
+          </div>
+          <div style="display: inline-block; width: 160px">
+            时长：${element.time} ${element.new ? '<span class="label">新纪录</span>' : ''}
+          </div>
+          <div style="display: inline-block;">剩余：<span>${element.count}</span></div>
+        </li>`
+    });
+    document.querySelector('#history-modal .list').innerHTML = content
+    document.getElementById('history-modal').style.display = 'block'
   }
   let interval
   let gameBody = document.getElementById('game-map')
+
+  let bg = [
+    'img/nt1.jpg',
+    'img/nt2.jpg',
+    'img/nt3.jpg',
+    'img/nt4.jpg',
+    'img/nt5.jpg',
+    'img/nt6.jpg',
+    'img/nt7.jpg',
+  ];
 
   let countElement = document.getElementById('count')
   let show = 0
@@ -93,16 +122,6 @@
       show = 1
     }
   }
-
-  let bg = [
-    'img/nt1.jpg',
-    'img/nt2.jpg',
-    'img/nt3.jpg',
-    'img/nt4.jpg',
-    'img/nt5.jpg',
-    'img/nt6.jpg',
-    'img/nt7.jpg',
-  ];
   let level = 1
   let levelName = [
     "小白",
@@ -122,6 +141,22 @@
   document.getElementById('dec-btn').onclick = function() {
     if (--level < 0) level = maxLevel
     newGame()
+  }
+  let game_ranking = JSON.parse(localStorage.getItem('game_ranking')) || []
+  document.getElementById('ranking').onclick = function() {
+    let content = ''
+    for (let i = 0; i < maxLevel; i++) {
+      content += `<li>${levelName[i]} <span class="label" style="margin-left: 20px;">${game_ranking[i] ? game_ranking[i].time : '暂无数据'}</span> <span style="float:right;">${game_ranking[i] ? game_ranking[i].date : ''}</span></li>`
+    }
+    document.querySelector('#ranking-modal .list').innerHTML = content
+    document.getElementById('ranking-modal').style.display = 'block'
+  }
+  document.getElementById('clear').onclick = function() {
+    if (confirm('确定要清除“最佳排行”和“历史战绩”数据吗？')) {
+      localStorage.clear()
+      game_ranking = []
+      game_record = []
+    }
   }
   document.getElementById('reset-game').onclick = function() {
     newGame()
@@ -184,17 +219,29 @@
           if (game.params.state != 0) {
             clearInterval(interval)
             let count_time = document.getElementById('time').innerText
-            game_record.unshift(`${new Date().toLocaleDateString()}  ${levelName[level]}   ${count_time}  ${game.params.count}  ${game.params.state == 1 ? '失败' : "胜利"}`)
+            let t = new Date().toLocaleString()
+
+            let is_new = game.params.state == 2 && (!game_ranking[level] || game_ranking[level].time > count_time)
+            game_record.unshift({
+              date: t,
+              levelName: levelName[level],
+              result: game.params.state == 1 ? '失败' : "胜利",
+              time: count_time,
+              count: game.params.count,
+              new: is_new
+            })
             if (game_record.length > 50) game_record.length = 50
             localStorage.setItem('game_record', JSON.stringify(game_record))
+
             if (game.params.state == 2) {
               countElement.innerText = '显示'
               gameBody.classList.add('hide')
               show = 2
-              if (!(levelName[level] in game_ranking)) game_ranking[levelName[level]] = {}
-              if (!('count_time' in game_ranking[levelName[level]]) || game_ranking[levelName[level]]['count_time'] > count_time) {
-                game_ranking[levelName[level]]['count_time'] = count_time
-                game_ranking[levelName[level]]['date'] = new Date().toLocaleDateString()
+              if (is_new) {
+                game_ranking[level] = {
+                  time: count_time,
+                  date: t
+                }
                 localStorage.setItem('game_ranking', JSON.stringify(game_ranking))
               }
             }
@@ -237,6 +284,15 @@
       document.getElementById('time').innerText = timer.run()
     }, 1000)
   }
+</script>
+<script>
+  // for (let model of document.getElementsByClassName('model')) {
+  //   model.onclick = event => {
+  //     if (event.target == model) {
+  //       model.style.display = 'none'
+  //     }
+  //   }
+  // }
 </script>
 
 </html>

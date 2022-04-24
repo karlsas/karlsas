@@ -41,3 +41,8 @@ function Timer() {
     init
   }
 }
+
+function HistoryRecord() {
+  let records = localStorage.getItem('game_record') || []
+  if (typeof records != 'object') records = []
+}
