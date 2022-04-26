@@ -75,6 +75,10 @@ body {
   height: 40px;
 }
 
+.hide {
+  display: none;
+}
+
 .map {
   border-collapse: collapse;
   width: 90%;
