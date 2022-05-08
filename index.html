@@ -110,7 +110,6 @@
         flagBtn.innerHTML = '隐藏'
         break
     }
-    if (operation === 1) {} else {}
   }
   newGame()
 
@@ -128,6 +127,7 @@
       alert(levelInfoText)
     }
 
+    gameBody.style.display = 'table'
     gameBody.innerHTML = ''
     let tdH = `${gameBody.offsetWidth / game.params.col}px`
     let gameMap = []
@@ -146,7 +146,6 @@
       }
       gameBody.appendChild(tr)
     }
-    gameBody.style.display = 'table'
 
     clearInterval(interval)
     timeElement.innerText = '00:00'
