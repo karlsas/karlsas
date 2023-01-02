@@ -105,21 +105,32 @@ function Game(level = 0) {
   /**
    * 快捷翻开
    */
-  function openQuickly(i, j) {
-    if (map[i][j] >= 10) return
-
+  function autoDisposeRoundBlock(i, j) {
     let count = 0
+    let noOpenCount = 0
     for (let m = i - 1; m <= i + 1; ++m)
       for (let n = j - 1; n <= j + 1; ++n)
-        if (inMap(m, n) && map[m][n] >= 20)
-          ++count
+        if (inMap(m, n)) {
+          if (map[m][n] >= 20)
+            ++count
+          if (map[m][n] >= 10)
+            ++noOpenCount
+        }
 
-    if (map[i][j] != count) return
+
+    if (map[i][j] != count && map[i][j] != noOpenCount) return
 
     for (let m = i - 1; m <= i + 1; ++m)
       for (let n = j - 1; n <= j + 1; ++n)
-        if (inMap(m, n) && map[m][n] < 20)
-          open(m, n)
+        if (inMap(m, n))
+          if (count == map[i][j]) {
+            if (map[m][n] < 20)
+              open(m, n)
+          } else {
+            if (map[m][n] >= 10 && map[m][n] < 20) {
+              flagBlock(m, n)
+            }
+          }
   }
 
   /**
@@ -129,12 +140,19 @@ function Game(level = 0) {
     if (map[i][j] < 10) return
 
     if (map[i][j] < 20) {
-      map[i][j] += 10
-      result.push([i, j, 11])
+      flagBlock(i, j)
     } else {
       map[i][j] -= 10
       result.push([i, j, 10])
     }
+  }
+
+  /**
+   * 标记方块
+   */
+  function flagBlock(i, j) {
+    map[i][j] += 10
+    result.push([i, j, 11])
   }
 
   /**
@@ -151,7 +169,7 @@ function Game(level = 0) {
    */
   function openBlock(i, j) {
     if (map[i][j] < 10) {
-      openQuickly(i, j)
+      autoDisposeRoundBlock(i, j)
     } else if (map[i][j] < 20) {
       open(i, j)
     }
