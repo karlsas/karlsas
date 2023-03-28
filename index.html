@@ -4,258 +4,92 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的扫雷</title>
-  <link rel="stylesheet" href="css/index.css">
-  <script src="js/game.js"></script>
-  <script src="js/component.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title>美女扫雷</title>
+  <link rel="stylesheet" href="./css/modal.css">
+  <script src="./js/modal.js"></script>
+  <style>
+    body {
+      background: url(./img/nt4.jpg) no-repeat;
+      background-color: #0a4f52;
+      background-size: cover;
+      background-position: center;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      height: 100vh;
+    }
+    
+    .menu {
+      background-color: #29b59f50;
+      border: 2px solid #a2faec;
+      padding: 5px;
+      width: 150px;
+      border-radius: 10px;
+    }
+    
+    .form-item {
+      display: flex;
+      margin: 20px 0;
+    }
+    
+    .form-label {
+      flex: 1;
+      text-align: right;
+      margin-right: 5px;
+    }
+    
+    .form-control {
+      flex: 2;
+      margin-left: 10px;
+    }
+  </style>
 </head>
 
-<script>
-  let gameRecord = JSON.parse(localStorage.getItem('game_record')) || []
-  let gameRanking = JSON.parse(localStorage.getItem('game_ranking')) || []
-  let bg = [
-    'img/nt1.jpg',
-    'img/nt2.jpg',
-    'img/nt3.jpg',
-    'img/nt4.jpg',
-    'img/nt5.jpg',
-    'img/nt6.jpg',
-    'img/nt7.jpg',
-  ]
-  let levelName = [
-    "小白",
-    '入门',
-    '初级',
-    '中级',
-    '高级',
-    '进阶',
-    '大师',
-  ]
-  let maxLevel = levelName.length - 1;
-  let operation, interval, show = false,
-    level = 1
-</script>
-
 <body>
-  <table class="info">
-    <tr>
-      <td><button id="level-info">中级</button></td>
-      <td id="time">00:00</td>
-      <td id="count" style="width:50px;">2335</td>
-      <td><i class="dec" onclick="if (--level < 0) level = maxLevel; newGame();"></i></td>
-      <td><i class="inc" onclick="if (++level > maxLevel) level = 0; newGame();"></i></td>
-      <td><button onclick="newGame();">重来</button></td>
-      <td><button onclick="showMenu();" id="menu-btn">菜单 <i class="menu-open"></i></button></td>
-    </tr>
-    <tr id="menu" style="display: none;">
-      <td><button onclick="showGameRecordModal()">历史</button></td>
-      <td><button onclick="showGameRankingModal()">排行</button></td>
-      <td><button onclick="if (confirm('确定要清除历史记录与最佳排行数据吗？')) gameRanking = [], gameRecord = [], localStorage.clear()">清除</button></td>
-      <td colspan="2" onclick="alert('+ 背景图来自 小红书平台 小白兔奶糖 小红书号 742635074 的作品。若侵权请联系 2217985811@qq.com 删除')"><button>关于</button></td>
-      <td><button onclick="alert('+ 数字代表周围一圈8个方块有多少个雷\n+ 数字9代表雷\n+ 当周围被标记的方块个数与中间的数字相等时，点击数字可以快速将周围未被标记的方块打开')">帮助</button></td>
-      <td><button style="width:52px;" onclick="alert('敬请期待')">更多</button></td>
-    </tr>
-  </table>
-  <table class="map" id="game-map">
-  </table>
-  <div class="flag-btn" id="flag-btn">
-    标记
+  <div style="height: auto;">
+    <h1 class="menu" onclick="window.location = './saolei.html'">开始游戏</h1>
+    <h1 class="menu" onclick="settingModal.show()">游戏设置</h1>
+    <h1 class="menu" onclick="window.location = './history.html'">历史记录</h1>
+    <!-- <h1 class="menu" onclick="window.location = './setting.html'">最佳排行</h1> -->
+    <!-- <h1 class="menu" onclick="window.location = './setting.html'">游戏技巧</h1> -->
   </div>
-  <div class="modal" id="history-modal">
-    <div class="modal-content">
-      <div class="modal-head">
-        <i class="back" onclick="document.getElementById('history-modal').style.display='none'"></i> 历史战绩
+  <div class="modal" id="settingModal">
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-title">游戏设置</div>
+        <div class="modal-close">关闭</div>
       </div>
-      <ul class="list">
-      </ul>
-    </div>
-  </div>
-  <div class="modal" id="ranking-modal">
-    <div class="modal-content">
-      <div class="modal-head">
-        <i class="back" onclick="document.getElementById('ranking-modal').style.display='none'"></i> 最佳排行
+      <div class="modal-content">
+        <form class="form">
+          <div class="form-item">
+            <div class="form-label">背景音乐</div>:
+            <div class="form-control">
+              <label style="margin-right:20px"><input type="radio" name="backgroundMusic">开</label>
+              <label><input type="radio" name="backgroundMusic" checked>关</label>
+            </div>
+          </div>
+          <div class="form-item">
+            <div class="form-label">游戏音效</div>:
+            <div class="form-control">
+              <label style="margin-right:20px"><input type="radio" name="gameAudio">开</label>
+              <label><input type="radio" name="gameAudio" checked>关</label>
+            </div>
+          </div>
+        </form>
       </div>
-      <ul class="list">
-        <li>入门 <span class="label" style="margin-left: 20px;">00:27</span> <span style="float:right;">2022/04/24 22:14:00</span></li>
-      </ul>
+      <div class="modal-fotter">
+        <div class="modal-cancel">取消</div>
+        <div class="modal-ok">确定</div>
+      </div>
     </div>
   </div>
 </body>
 <script>
-  let levelInfo = document.getElementById('level-info')
-  let gameBody = document.getElementById('game-map')
-  let countElement = document.getElementById('count')
-  let flagBtn = document.getElementById('flag-btn')
-  let timeElement = document.getElementById('time')
-  let menuElement = document.getElementById('menu')
-  flagBtn.onclick = function() {
-    switch (operation) {
-      case 0:
-        operation = 1
-        flagBtn.classList.add('flag-btn-active')
-        break
-      case 1:
-        operation = 0
-        flagBtn.classList.remove('flag-btn-active')
-        break
-      case 2:
-        operation = 3
-        gameBody.style.display = 'none'
-        flagBtn.innerHTML = '显示'
-        break
-      case 3:
-        operation = 2
-        gameBody.style.display = 'table'
-        flagBtn.innerHTML = '隐藏'
-        break
-    }
-  }
-  newGame()
-
-  function newGame() {
-    operation = 0
-    flagBtn.innerHTML = '标记'
-    levelInfo.innerText = levelName[level]
-    document.body.style.backgroundImage = `url(${bg[level]})`
-
-    let game = Game(level)
-    countElement.innerText = game.params.count
-    let mine_rate = game.params.mine / (game.params.row * game.params.col) * 100
-    let levelInfoText = `难度：${levelName[level]}\n大小：${game.params.col} ✖ ${game.params.row} ＝ ${game.params.row * game.params.col}\n地雷：${game.params.mine}个(${mine_rate.toFixed(2)}%)`
-    levelInfo.onclick = function() {
-      alert(levelInfoText)
-    }
-
-    gameBody.style.display = 'table'
-    gameBody.innerHTML = ''
-    let tdH = `${gameBody.offsetWidth / game.params.col}px`
-    let gameMap = []
-    for (let i = 0; i < game.params.row; ++i) {
-      let tr = document.createElement('tr')
-      gameMap[i] = []
-
-      for (let j = 0; j < game.params.col; ++j) {
-        let td = document.createElement('td')
-        gameMap[i][j] = td
-        td.onclick = () => {
-          play(i, j)
-        }
-        td.style.height = tdH
-        tr.appendChild(td)
-      }
-      gameBody.appendChild(tr)
-    }
-
-    clearInterval(interval)
-    timeElement.innerText = '00:00'
-    let timer = Timer()
-    interval = setInterval(function() {
-      timeElement.innerText = timer.run()
-    }, 1000)
-
-    function play(i, j) {
-      if (game.params.state != 0) return
-
-      operation == 1 ? game.flag(i, j) : game.openBlock(i, j)
-      countElement.innerText = game.params.count
-
-      if (game.params.state != 0) {
-        clearInterval(interval)
-        let count_time = timeElement.innerText
-        let is_new = game.params.state == 2 && (!gameRanking[level] || gameRanking[level].time > count_time)
-        let t = new Date().toLocaleString()
-        gameRecord.unshift({
-          date: t,
-          levelName: levelName[level],
-          result: game.params.state == 1 ? '失败' : "胜利",
-          time: count_time,
-          count: game.params.count,
-          new: is_new
-        })
-        if (gameRecord.length > 50) gameRecord.length = 50
-        localStorage.setItem('gameRecord', JSON.stringify(gameRecord))
-
-        if (game.params.state == 2) {
-          operation = 3
-          gameBody.style.display = 'none'
-          flagBtn.innerHTML = '显示'
-          if (is_new) {
-            gameRanking[level] = {
-              time: count_time,
-              date: t
-            }
-            localStorage.setItem('game_ranking', JSON.stringify(gameRanking))
-          }
-        }
-        alert(game.params.state == 1 ? '失败' : "胜利")
-      }
-
-      let result = game.get()
-      for (let r of result) {
-        switch (r[2]) {
-          case 11:
-            gameMap[r[0]][r[1]].style.backgroundColor = 'red'
-            break
-          case 10:
-            gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(0,0,0,0.7)'
-            break
-          case 0:
-            gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(255,255,255,0.7)'
-            break
-          case 9:
-            gameMap[r[0]][r[1]].innerText = r[2]
-            gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(255,255,255,0.7)'
-            gameMap[r[0]][r[1]].style.color = 'red'
-            gameMap[r[0]][r[1]].style.fontWeight = 'blod'
-            break
-          default:
-            gameMap[r[0]][r[1]].innerText = r[2]
-            gameMap[r[0]][r[1]].style.backgroundColor = 'rgba(255,255,255,0.7)'
-            gameMap[r[0]][r[1]].style.color = 'blue'
-            break
-        }
-      }
-    }
-  }
-
-  function showGameRecordModal() {
-    let content = ''
-    gameRecord.forEach(element => {
-      content += `<li>
-          <div style="margin-bottom: 5px;">
-            ${element.date} <span style="margin-left: 20px;">${element.levelName}</span>
-            <span style="float: right; color: ${element.result == '失败' ? 'red' : 'green'}">${element.result}</span>
-          </div>
-          <div style="display: inline-block; width: 160px">
-            时长：${element.time} ${element.new ? '<span class="label">新纪录</span>' : ''}
-          </div>
-          <div style="display: inline-block;">剩余：<span>${element.count}</span></div>
-        </li>`
-    });
-    document.querySelector('#history-modal .list').innerHTML = content
-    document.getElementById('history-modal').style.display = 'block'
-  }
-
-  function showGameRankingModal() {
-    let content = ''
-    for (let i = 0; i <= maxLevel; i++) {
-      content += `<li>${levelName[i]} <span class="label" style="margin-left: 20px;">${gameRanking[i] ? gameRanking[i].time : '暂无数据'}</span> <span style="float:right;">${gameRanking[i] ? gameRanking[i].date : ''}</span></li>`
-    }
-    document.querySelector('#ranking-modal .list').innerHTML = content
-    document.getElementById('ranking-modal').style.display = 'block'
-  }
-
-  function showMenu() {
-    if (show) {
-      menuElement.style.display = 'none'
-      document.getElementById('menu-btn').innerHTML = '菜单 <i class="menu-open"></i>'
-    } else {
-      menuElement.style.display = 'table-row'
-      document.getElementById('menu-btn').innerHTML = '菜单 <i class="menu-close"></i>'
-    }
-    show = !show
-  }
+  var settingModal = Modal('settingModal')
 </script>
 
 </html>

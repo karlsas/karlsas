@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title>美女扫雷</title>
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/modal.css">
+  <script src="./js/modal.js"></script>
+  <script src="./js/game.js"></script>
+  <script src="./js/timer.js"></script>
+  <style>
+    body {
+      background-color: #0a4f52;
+      margin: 0;
+      border: 0;
+      padding: 5px;
+      user-select: none;
+    }
+    
+    .block {
+      flex: 1;
+      border: 1px solid white;
+      background-repeat: no-repeat;
+      background-image: url(../img/nt.png);
+      background-color: #29b59f;
+      text-align: center;
+      font-size: 18px;
+      transition: all .2s linear;
+    }
+    
+    #gameMap {
+      margin-bottom: 80px;
+    }
+    
+    .menu {
+      background-color: rgba(141, 217, 237, 0.7);
+      display: flex;
+      height: 50px;
+      border-radius: 5px;
+      overflow: hidden;
+      bottom: 20px;
+      position: fixed;
+      width: calc(100% - 10px);
+      box-sizing: border-box;
+    }
+    
+    .menu button {
+      flex: 1;
+      border: 3px solid transparent;
+      border-radius: 5px;
+      margin: 0;
+      background-color: transparent;
+      font-size: large;
+      color: black;
+    }
+    
+    .menu>button.active {
+      border-color: #1cd44a;
+    }
+    
+    #esayControl.active {
+      border-color: #0f6de7;
+    }
+    
+    #stateElement {
+      text-align: center;
+      font-size: 22px;
+      padding: 20px;
+      color: green;
+    }
+    
+    .nav span {
+      margin: 0 3px;
+    }
+    
+    .row {
+      display: flex;
+      width: 100%;
+      padding: 5px 0;
+    }
+    
+    .rank-label {
+      flex: 1;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 顶部信息栏 -->
+  <nav class="nav">
+    <button onclick="gameStart()">开始</button>
+    <span id="timer">00:00</span>
+    <button id="rankElement">入门</button>
+    <span id="countElement">33128</span> 最佳
+    <span id="rankingElement">00:00</span>
+    <button style="float:right;margin-right: 20px;" onclick="history.back()">返回</button>
+  </nav>
+  <!-- 游戏主区域 -->
+  <div id="gameMap"></div>
+  <!-- 底部菜单 -->
+  <div class="menu">
+    <button class="operate active">翻开</button>
+    <button class="operate">插旗</button>
+    <button id="esayControl" class="active">辅助</button>
+  </div>
+  <!-- 等级选择模态框 -->
+  <div class="modal" id="rankModal">
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-title">等级设置</div>
+        <!-- <div class="modal-close">关闭</div> -->
+      </div>
+      <div class="modal-content">
+        <div class="row">
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              小白
+            </label>
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              入门
+            </label>
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              初级
+            </label>
+        </div>
+        <div class="row">
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              中级
+            </label>
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              高级
+            </label>
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              进阶
+            </label>
+        </div>
+        <div class="row">
+          <label class="rank-label">
+              <input type="radio" name="gameRank" />
+              大师
+            </label>
+          <label class="rank-label">
+            </label>
+          <label class="rank-label">
+            </label>
+        </div>
+      </div>
+      <div class="modal-fotter">
+        <div class="modal-cancel">取消</div>
+        <div class="modal-ok">确定</div>
+      </div>
+    </div>
+  </div>
+  <!-- 游戏结束模态框 -->
+  <div class="modal" id="resultModal">
+    <div class="modal-body" style="width: 250px">
+      <div class="modal-header">
+        <div class="modal-title">游戏结束</div>
+        <!-- <div class="modal-close">关闭</div> -->
+      </div>
+      <div class="modal-content">
+        <div id="stateElement">胜利！</div>
+      </div>
+      <div class="modal-fotter">
+        <!-- <div class="modal-cancel">取消</div> -->
+        <div class="modal-ok">确定</div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="./js/gameLog.js"></script>
+<script>
+  let gameHistory = GameHistory()
+  let game
+  let colNum = 10 // 列
+  let picNum = 10 // 背景图片张数
+  let rankDict = {
+    0: {
+      title: '小白',
+      rowNum: 10,
+      mineNum: 10,
+    },
+    1: {
+      title: '入门',
+      rowNum: 15,
+      mineNum: 16,
+    },
+    2: {
+      title: '初级',
+      rowNum: 20,
+      mineNum: 22,
+    },
+    3: {
+      title: '中级',
+      rowNum: 40,
+      mineNum: 45,
+    },
+    4: {
+      title: '高级',
+      rowNum: 80,
+      mineNum: 92,
+    },
+    5: {
+      title: '进阶',
+      rowNum: 160,
+      mineNum: 190,
+    },
+    6: {
+      title: '大师',
+      rowNum: 320,
+      mineNum: 384,
+    }
+  }
+  let rank = localStorage.getItem('saolei_gameRank') || 1
+  let rankInputs = document.querySelectorAll('#rankModal input[name="gameRank"]')
+  let rankModal = Modal('rankModal', {
+    on_ok: () => {
+      rankInputs.forEach((e, i) => {
+        if (e.checked) rank = i
+      })
+      localStorage.setItem('saolei_gameRank', rank)
+      rankElement.innerText = rankDict[rank].title
+      gameStart()
+      rankModal.hidden()
+    },
+    on_show: () => {
+      rankInputs[rank].checked = true
+    }
+  })
+  let rankElement = document.getElementById('rankElement')
+  rankElement.onclick = rankModal.show
+  rankElement.innerText = rankDict[rank].title
+
+  let resultModal = Modal('resultModal', {
+    on_ok: () => {
+      resultModal.hidden()
+      game.gameover()
+      render(game.get())
+    }
+  })
+
+  timer = Timer('timer')
+
+  let rankingElement = document.getElementById('rankingElement')
+  let gameRanking = GameRanking()
+</script>
+
+<script>
+  var operation = 0
+  var operateControls = document.querySelectorAll('.operate')
+  operateControls.forEach(e => {
+    e.onclick = () => {
+      operateControls[operation].className = ''
+      operation = (operation + 1) % 2
+      operateControls[operation].className = 'active'
+    }
+  })
+
+  var easy = true
+  esayControl.onclick = () => {
+    esayControl.className = easy ? '' : 'active';
+    easy = !easy
+  }
+
+  let gameMapElement = document.getElementById('gameMap')
+  gameMapElement.style.marginTop = (document.querySelector('.nav').scrollHeight + 10) + 'px' // 距离顶部导航栏10px
+  let blockMap, blockWidth
+  gameStart()
+
+  function render(list) {
+    list.forEach(e => {
+      let [i, j, type] = e
+      renderBlock(blockMap[i][j], type)
+    });
+  }
+
+  function renderBlock(block, type) {
+    if (type == 0) { // 空白格
+      block.style.background = 'transparent'
+    } else if (type == 10) { // 正常格
+      block.style.backgroundImage = 'url(../img/nt.png)';
+      let r = Math.floor(Math.random() * picNum)
+      block.style.backgroundPositionX = (-blockWidth * r) + 'px';
+      block.style.backgroundColor = '#29b59f';
+    } else {
+      block.style.backgroundImage = 'url(../img/num.png)';
+      if (type == 9) { // 地雷爆炸
+        block.style.backgroundPositionX = (-blockWidth * 9) + 'px';
+        block.style.backgroundColor = 'red'
+      } else if (type == 11) { // 标记格
+        block.style.backgroundPositionX = '0px';
+        block.style.backgroundColor = 'red'
+      } else { // 数字格
+        block.style.backgroundPositionX = (-blockWidth * type) + 'px';
+        block.style.backgroundColor = '#29b59f'
+      }
+    }
+  }
+
+  function gameStart() {
+    rankingElement.innerText = timer.format(gameRanking.get()[rankDict[rank].title])
+    blockMap = []
+    gameMapElement.innerHTML = ''
+    if (operation) operateControls[0].onclick()
+
+    let rowNum = rankDict[rank].rowNum
+    game = Game(rowNum, colNum, rankDict[rank].mineNum)
+    countElement.innerText = game.params.count
+
+    for (let i = 0; i < rowNum; ++i) {
+      let rowDiv = document.createElement('div')
+      blockMap[i] = []
+      rowDiv.style.display = 'flex'
+      for (let j = 0; j < colNum; ++j) {
+        let blockElement = document.createElement('div')
+        blockElement.classList.add('block')
+        blockElement.addEventListener('click', function(e) {
+          if (game.params.state) return
+          if (operation) {
+            game.flag(i, j)
+          } else {
+            game.openBlock(i, j, easy)
+          }
+          render(game.get())
+          countElement.innerText = game.params.count
+          if (game.params.state) {
+            timer.stop()
+            gameHistory.push(rankDict[rank].title, game.params.state, timer.get())
+            rankingElement.innerText = timer.format(gameRanking.get()[rankDict[rank].title])
+            renderGameOver(game.params.state)
+          }
+        })
+        rowDiv.appendChild(blockElement)
+        blockMap[i][j] = blockElement
+      }
+      gameMapElement.appendChild(rowDiv)
+    }
+
+    blockWidth = blockMap[0][0].scrollWidth
+    for (let i = 0; i < rowNum; ++i) {
+      for (let j = 0; j < colNum; ++j) {
+        let block = blockMap[i][j]
+        block.style.height = blockWidth + 'px'
+        block.style.lineHeight = block.style.height
+        block.style.backgroundSize = (blockWidth * colNum) + 'px';
+
+        // 随机设置背景图片
+        let r = Math.floor(Math.random() * picNum)
+        block.style.backgroundPositionX = (-blockWidth * r) + 'px';
+      }
+    }
+
+    timer.start(true)
+  }
+
+  function renderGameOver(state) {
+    let stateElement = document.getElementById('stateElement')
+    if (state == 1) {
+      stateElement.innerText = '失败！'
+      stateElement.style.color = 'red'
+    } else {
+      stateElement.innerText = '胜利！'
+      stateElement.style.color = 'green'
+    }
+    resultModal.show()
+  }
+</script>
+
+</html>
