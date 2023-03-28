@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title>历史记录</title>
+  <link rel="stylesheet" href="./css/nav.css">
+  <script src="./js/gameLog.js"></script>
+  <style>
+    body {
+      background: url(./img/nt4.jpg) no-repeat;
+      background-color: #0a4f52;
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      border: 0;
+      margin: 0;
+      padding: 10px;
+    }
+    
+    .list {
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+    }
+    
+    .list-item {
+      padding: 5px 10px;
+      margin: 0 0 10px 0;
+      background-color: #ffffff50;
+      border-radius: 5px;
+      border: 1px solid #a2faec;
+    }
+    
+    .list-header {
+      display: flex;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <button onclick="history.back()">返回</button>
+  </nav>
+  <ul class="list" style="list-style:none">
+    <li class="list-item">
+      <div style="margin-bottom:5px">
+        <span>2023-03-26 16:47:30</span>
+        <span style="float:right;color:red">失败</span>
+      </div>
+      <div>
+        难度：<span style="margin-right:10px">入门</span> 耗时：
+        <span>00:24</span>
+        <span style="color:red">新纪录</span>
+      </div>
+    </li>
+    <li class="list-item">
+      <div style="margin-bottom:5px">
+        <span>2023-03-26 16:47:30</span>
+        <span style="float:right;color:red">失败</span>
+      </div>
+      <div>
+        难度：<span style="margin-right:10px">入门</span> 耗时：
+        <span>00:24</span>
+        <span style="color:red">新纪录</span>
+      </div>
+    </li>
+  </ul>
+</body>
+<script src="./js/timer.js"></script>
+<script src="./js/gameLog.js"></script>
+<script>
+  let listElement = document.querySelector('.list')
+  listElement.style.marginTop = (document.querySelector('.nav').scrollHeight) + 'px'
+  let timer = Timer()
+  let content = ''
+  GameHistory().get().reverse().forEach(e => {
+    content += createItem(e)
+  });
+  listElement.innerHTML = content
+
+  function createItem(item) {
+    let time = timer.format(item.timeCount)
+    return `<li class="list-item">
+      <div style="margin-bottom:5px">
+        <span>${item.date}</span>
+        <span style="float:right;color:${item.state == 1 ? 'red' : 'green'}">${item.state == 1 ? '失败' : '胜利'}</span>
+      </div>
+      <div>
+        难度：<span style="margin-right:10px">${item.rank}</span> 耗时：
+        <span>${time}</span>
+        <span style="color:red;">${item.isNew ? '新记录' : ''}</span>
+      </div>
+    </li>`
+  }
+</script>
+
+</html>
