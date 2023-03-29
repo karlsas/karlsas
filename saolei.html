@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>美女扫雷</title>
   <link rel="stylesheet" href="./css/nav.css">
   <link rel="stylesheet" href="./css/modal.css">
@@ -19,7 +20,7 @@
       padding: 5px;
       user-select: none;
     }
-    
+
     .block {
       flex: 1;
       border: 1px solid white;
@@ -30,11 +31,11 @@
       font-size: 18px;
       transition: all .2s linear;
     }
-    
+
     #gameMap {
       margin-bottom: 80px;
     }
-    
+
     .menu {
       background-color: rgba(141, 217, 237, 0.7);
       display: flex;
@@ -46,7 +47,7 @@
       width: calc(100% - 10px);
       box-sizing: border-box;
     }
-    
+
     .menu button {
       flex: 1;
       border: 3px solid transparent;
@@ -56,32 +57,32 @@
       font-size: large;
       color: black;
     }
-    
+
     .menu>button.active {
       border-color: #1cd44a;
     }
-    
+
     #esayControl.active {
       border-color: #0f6de7;
     }
-    
+
     #stateElement {
       text-align: center;
       font-size: 22px;
       padding: 20px;
       color: green;
     }
-    
+
     .nav span {
       margin: 0 3px;
     }
-    
+
     .row {
       display: flex;
       width: 100%;
       padding: 5px 0;
     }
-    
+
     .rank-label {
       flex: 1;
       text-align: center;
@@ -117,41 +118,41 @@
       <div class="modal-content">
         <div class="row">
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              小白
-            </label>
+            <input type="radio" name="gameRank" />
+            小白
+          </label>
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              入门
-            </label>
+            <input type="radio" name="gameRank" />
+            入门
+          </label>
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              初级
-            </label>
+            <input type="radio" name="gameRank" />
+            初级
+          </label>
         </div>
         <div class="row">
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              中级
-            </label>
+            <input type="radio" name="gameRank" />
+            中级
+          </label>
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              高级
-            </label>
+            <input type="radio" name="gameRank" />
+            高级
+          </label>
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              进阶
-            </label>
+            <input type="radio" name="gameRank" />
+            进阶
+          </label>
         </div>
         <div class="row">
           <label class="rank-label">
-              <input type="radio" name="gameRank" />
-              大师
-            </label>
+            <input type="radio" name="gameRank" />
+            大师
+          </label>
           <label class="rank-label">
-            </label>
+          </label>
           <label class="rank-label">
-            </label>
+          </label>
         </div>
       </div>
       <div class="modal-fotter">
@@ -178,67 +179,32 @@
   </div>
 </body>
 <script src="./js/gameLog.js"></script>
+<script src="./js/gameLevel.js"></script>
 <script>
+  let level = GameLevel()
   let gameHistory = GameHistory()
   let game
   let colNum = 10 // 列
   let picNum = 10 // 背景图片张数
-  let rankDict = {
-    0: {
-      title: '小白',
-      rowNum: 10,
-      mineNum: 10,
-    },
-    1: {
-      title: '入门',
-      rowNum: 15,
-      mineNum: 16,
-    },
-    2: {
-      title: '初级',
-      rowNum: 20,
-      mineNum: 22,
-    },
-    3: {
-      title: '中级',
-      rowNum: 40,
-      mineNum: 45,
-    },
-    4: {
-      title: '高级',
-      rowNum: 80,
-      mineNum: 92,
-    },
-    5: {
-      title: '进阶',
-      rowNum: 160,
-      mineNum: 190,
-    },
-    6: {
-      title: '大师',
-      rowNum: 320,
-      mineNum: 384,
-    }
-  }
-  let rank = localStorage.getItem('saolei_gameRank') || 1
   let rankInputs = document.querySelectorAll('#rankModal input[name="gameRank"]')
   let rankModal = Modal('rankModal', {
     on_ok: () => {
       rankInputs.forEach((e, i) => {
-        if (e.checked) rank = i
+        if (e.checked) {
+          level.set(i)
+          rankElement.innerText = level.getTitle()
+        }
       })
-      localStorage.setItem('saolei_gameRank', rank)
-      rankElement.innerText = rankDict[rank].title
       gameStart()
       rankModal.hidden()
     },
     on_show: () => {
-      rankInputs[rank].checked = true
+      rankInputs[level.get()].checked = true
     }
   })
   let rankElement = document.getElementById('rankElement')
   rankElement.onclick = rankModal.show
-  rankElement.innerText = rankDict[rank].title
+  rankElement.innerText = level.getTitle()
 
   let resultModal = Modal('resultModal', {
     on_ok: () => {
@@ -307,13 +273,13 @@
   }
 
   function gameStart() {
-    rankingElement.innerText = timer.format(gameRanking.get()[rankDict[rank].title])
+    rankingElement.innerText = timer.format(gameRanking.get()[level.getTitle()])
     blockMap = []
     gameMapElement.innerHTML = ''
     if (operation) operateControls[0].onclick()
 
-    let rowNum = rankDict[rank].rowNum
-    game = Game(rowNum, colNum, rankDict[rank].mineNum)
+    let rowNum = level.getRowNum()
+    game = Game(rowNum, colNum, level.getMineNum())
     countElement.innerText = game.params.count
 
     for (let i = 0; i < rowNum; ++i) {
@@ -323,7 +289,7 @@
       for (let j = 0; j < colNum; ++j) {
         let blockElement = document.createElement('div')
         blockElement.classList.add('block')
-        blockElement.addEventListener('click', function(e) {
+        blockElement.addEventListener('click', function (e) {
           if (game.params.state) return
           if (operation) {
             game.flag(i, j)
@@ -334,8 +300,8 @@
           countElement.innerText = game.params.count
           if (game.params.state) {
             timer.stop()
-            gameHistory.push(rankDict[rank].title, game.params.state, timer.get())
-            rankingElement.innerText = timer.format(gameRanking.get()[rankDict[rank].title])
+            gameHistory.push(level.getTitle(), game.params.state, timer.get())
+            rankingElement.innerText = timer.format(gameRanking.get()[level.getTitle()])
             renderGameOver(game.params.state)
           }
         })
