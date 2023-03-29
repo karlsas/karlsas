@@ -8,6 +8,8 @@
   <title>美女扫雷</title>
   <link rel="stylesheet" href="./css/modal.css">
   <script src="./js/modal.js"></script>
+  <script src="./js/gameLog.js"></script>
+  <script src="./js/timer.js"></script>
   <style>
     body {
       background: url(./img/nt4.jpg) no-repeat;
@@ -37,13 +39,11 @@
     }
     
     .form-label {
-      flex: 1;
       text-align: right;
       margin-right: 5px;
     }
     
     .form-control {
-      flex: 2;
       margin-left: 10px;
     }
   </style>
@@ -54,9 +54,10 @@
     <h1 class="menu" onclick="location = './saolei.html'">开始游戏</h1>
     <h1 class="menu" onclick="settingModal.show()">游戏设置</h1>
     <h1 class="menu" onclick="location = './history.html'">历史记录</h1>
-    <!-- <h1 class="menu" onclick="location = './setting.html'">最佳排行</h1> -->
-    <!-- <h1 class="menu" onclick="location = './setting.html'">游戏技巧</h1> -->
+    <h1 class="menu" onclick="rankingModal.show()">最佳排行</h1>
+    <h1 class="menu" onclick="tipModal.show()">游戏技巧</h1>
   </div>
+  <!-- 游戏设置模态框 -->
   <div class="modal" id="settingModal">
     <div class="modal-body">
       <div class="modal-header">
@@ -64,19 +65,21 @@
         <div class="modal-close">关闭</div>
       </div>
       <div class="modal-content">
-        <form class="form">
+        <form class="form" style="display: inline-block;">
           <div class="form-item">
-            <div class="form-label">背景音乐</div>:
             <div class="form-control">
-              <label style="margin-right:20px"><input type="radio" name="backgroundMusic">开</label>
-              <label><input type="radio" name="backgroundMusic" checked>关</label>
+              <label style="margin-right:20px">
+                <input type="checkbox">
+                清空历史记录
+              </label>
             </div>
           </div>
           <div class="form-item">
-            <div class="form-label">游戏音效</div>:
             <div class="form-control">
-              <label style="margin-right:20px"><input type="radio" name="gameAudio">开</label>
-              <label><input type="radio" name="gameAudio" checked>关</label>
+              <label>
+                <input type="checkbox">
+                清空最佳排行
+              </label>
             </div>
           </div>
         </form>
@@ -87,9 +90,62 @@
       </div>
     </div>
   </div>
+  <!-- 游戏技巧模态框 -->
+  <div class="modal" id="tipModal">
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-title">游戏技巧</div>
+        <div class="modal-close">关闭</div>
+      </div>
+      <div class="modal-content" style="text-align: left">
+        <p>· 数字代表周围一圈的8个格子的雷的个数</p>
+        <p>· 当数字等于周围标记的格子数量时，点击数字可以快速将周围未标记的格子打开</p>
+        <p>· 开启辅助功能时，当数字等于周围未打开的格子数量时，点击数字可以快速将周围格子全部标记</p>
+      </div>
+    </div>
+  </div>
+  <!-- 最佳排行模态框 -->
+  <div class="modal" id="rankingModal">
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-title">最佳排行</div>
+        <div class="modal-close">关闭</div>
+      </div>
+      <div class="modal-content">
+        <script>
+          let gameRanking = GameRanking()
+          let rankingData = gameRanking.get()
+          let timer = Timer()
+          for (let i in rankingData) {
+            let t = timer.format(rankingData[i])
+            document.write(`<div>${i}：${t}</div>`)
+          }
+        </script>
+      </div>
+    </div>
+  </div>
 </body>
 <script>
-  var settingModal = Modal('settingModal')
+  var rankingModal = Modal('rankingModal')
+  var tipModal = Modal('tipModal')
+  var settingModal = Modal('settingModal', {
+    on_ok: () => {
+      let chose = []
+      document.querySelectorAll('input[type="checkbox"]').forEach((e, i) => {
+        if (e.checked) chose.push(i)
+      })
+      for (let i of chose) {
+        if (i) {
+          gameRanking.clear()
+          document.querySelector('#rankingModal .modal-content').innerHTML = ''
+        } else {
+          GameHistory().clear()
+        }
+      }
+      settingModal.hidden()
+      if (chose.length) alert('清除成功！')
+    }
+  })
 </script>
 
 </html>

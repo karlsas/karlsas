@@ -4,14 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>美女扫雷</title>
   <link rel="stylesheet" href="./css/nav.css">
   <link rel="stylesheet" href="./css/modal.css">
   <script src="./js/modal.js"></script>
   <script src="./js/game.js"></script>
   <script src="./js/timer.js"></script>
+  <script src="./js/gameLevel.js"></script>
+  <script src="./js/gameLog.js"></script>
   <style>
     body {
       background-color: #0a4f52;
@@ -20,22 +21,22 @@
       padding: 5px;
       user-select: none;
     }
-
+    
     .block {
       flex: 1;
       border: 1px solid white;
       background-repeat: no-repeat;
-      background-image: url(../img/nt.png);
+      background-image: url(./img/nt.png);
       background-color: #29b59f;
       text-align: center;
       font-size: 18px;
       transition: all .2s linear;
     }
-
+    
     #gameMap {
       margin-bottom: 80px;
     }
-
+    
     .menu {
       background-color: rgba(141, 217, 237, 0.7);
       display: flex;
@@ -47,7 +48,7 @@
       width: calc(100% - 10px);
       box-sizing: border-box;
     }
-
+    
     .menu button {
       flex: 1;
       border: 3px solid transparent;
@@ -57,32 +58,32 @@
       font-size: large;
       color: black;
     }
-
+    
     .menu>button.active {
       border-color: #1cd44a;
     }
-
+    
     #esayControl.active {
       border-color: #0f6de7;
     }
-
+    
     #stateElement {
       text-align: center;
       font-size: 22px;
       padding: 20px;
       color: green;
     }
-
+    
     .nav span {
       margin: 0 3px;
     }
-
+    
     .row {
       display: flex;
       width: 100%;
       padding: 5px 0;
     }
-
+    
     .rank-label {
       flex: 1;
       text-align: center;
@@ -116,44 +117,10 @@
         <!-- <div class="modal-close">关闭</div> -->
       </div>
       <div class="modal-content">
-        <div class="row">
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            小白
-          </label>
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            入门
-          </label>
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            初级
-          </label>
-        </div>
-        <div class="row">
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            中级
-          </label>
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            高级
-          </label>
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            进阶
-          </label>
-        </div>
-        <div class="row">
-          <label class="rank-label">
-            <input type="radio" name="gameRank" />
-            大师
-          </label>
-          <label class="rank-label">
-          </label>
-          <label class="rank-label">
-          </label>
-        </div>
+        <script>
+          let level = GameLevel()
+          document.write(level.getControlElement(3))
+        </script>
       </div>
       <div class="modal-fotter">
         <div class="modal-cancel">取消</div>
@@ -163,13 +130,14 @@
   </div>
   <!-- 游戏结束模态框 -->
   <div class="modal" id="resultModal">
-    <div class="modal-body" style="width: 250px">
+    <div class="modal-body">
       <div class="modal-header">
         <div class="modal-title">游戏结束</div>
         <!-- <div class="modal-close">关闭</div> -->
       </div>
       <div class="modal-content">
-        <div id="stateElement">胜利！</div>
+        <!-- <div id="stateElement" style="color:red">失败！再接再厉！</div> -->
+        <div id="stateElement">恭喜通关！</div>
       </div>
       <div class="modal-fotter">
         <!-- <div class="modal-cancel">取消</div> -->
@@ -178,10 +146,7 @@
     </div>
   </div>
 </body>
-<script src="./js/gameLog.js"></script>
-<script src="./js/gameLevel.js"></script>
 <script>
-  let level = GameLevel()
   let gameHistory = GameHistory()
   let game
   let colNum = 10 // 列
@@ -289,7 +254,7 @@
       for (let j = 0; j < colNum; ++j) {
         let blockElement = document.createElement('div')
         blockElement.classList.add('block')
-        blockElement.addEventListener('click', function (e) {
+        blockElement.addEventListener('click', function(e) {
           if (game.params.state) return
           if (operation) {
             game.flag(i, j)

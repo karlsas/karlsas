@@ -10,11 +10,11 @@
   <script src="./js/gameLog.js"></script>
   <style>
     body {
-      background: url(./img/nt4.jpg) no-repeat;
-      background-color: #0a4f52;
+      /* background: url(./img/nt4.jpg) no-repeat;
       background-size: cover;
       background-position: center;
-      background-attachment:fixed;
+      background-attachment: fixed; */
+      background-color: #0a4f52;
       border: 0;
       margin: 0;
       padding: 10px;
@@ -24,12 +24,13 @@
       margin: 0;
       padding: 0;
       overflow: auto;
+      color: white;
     }
     
     .list-item {
       padding: 5px 10px;
       margin: 0 0 10px 0;
-      background-color: #ffffff50;
+      background-color: #00000090;
       border-radius: 5px;
       border: 1px solid #a2faec;
     }
@@ -42,32 +43,10 @@
 
 <body>
   <nav class="nav">
-    <button onclick="history.back()">返回</button>
+    <a>历史记录（近30条）</a>
+    <a style="float:right;margin-right: 20px;" href="javascript:history.back();">返回</a>
   </nav>
-  <ul class="list" style="list-style:none">
-    <li class="list-item">
-      <div style="margin-bottom:5px">
-        <span>2023-03-26 16:47:30</span>
-        <span style="float:right;color:red">失败</span>
-      </div>
-      <div>
-        难度：<span style="margin-right:10px">入门</span> 耗时：
-        <span>00:24</span>
-        <span style="color:red">新纪录</span>
-      </div>
-    </li>
-    <li class="list-item">
-      <div style="margin-bottom:5px">
-        <span>2023-03-26 16:47:30</span>
-        <span style="float:right;color:red">失败</span>
-      </div>
-      <div>
-        难度：<span style="margin-right:10px">入门</span> 耗时：
-        <span>00:24</span>
-        <span style="color:red">新纪录</span>
-      </div>
-    </li>
-  </ul>
+  <ul class="list" style="list-style:none"></ul>
 </body>
 <script src="./js/timer.js"></script>
 <script src="./js/gameLog.js"></script>

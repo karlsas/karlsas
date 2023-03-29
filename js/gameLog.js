@@ -1,3 +1,6 @@
+/**
+ * 排行榜
+ */
 function GameRanking() {
   let get = () => {
     try {
@@ -16,10 +19,16 @@ function GameRanking() {
         return true
       }
       return false
-    }
+    },
+    clear: () => {
+      localStorage.removeItem('gameRanking')
+    },
   }
 }
 
+/**
+ * 历史记录
+ */
 function GameHistory() {
   let get = () => {
     try {
@@ -42,11 +51,14 @@ function GameHistory() {
       timeCount,
       isNew
     })
-    localStorage.setItem('gameHistories', JSON.stringify(gameHistories))
+    localStorage.setItem('gameHistories', JSON.stringify(gameHistories.slice(-30)))
   }
 
   return {
     push,
-    get
+    get,
+    clear: () => {
+      localStorage.removeItem('gameHistories')
+    },
   }
 }

@@ -1,3 +1,6 @@
+/**
+ * 游戏等级
+ */
 function GameLevel() {
   let level = localStorage.getItem('saolei_gameRank') || 1
   let levelDict = {
@@ -39,24 +42,15 @@ function GameLevel() {
   }
 
   return {
-    getTitle: () => {
-      return levelDict[level].title
-    },
-    getRowNum: () => {
-      return levelDict[level].rowNum
-    },
-    getMineNum: () => {
-      return levelDict[level].mineNum
-    },
-    get: () => {
-      return level
-    },
+    getTitle: () => levelDict[level].title,
+    getRowNum: () => levelDict[level].rowNum,
+    getMineNum: () => levelDict[level].mineNum,
+    get: () => level,
     set: (lev) => {
       level = lev
       localStorage.setItem('saolei_gameRank', lev)
     },
-    getControlElement: () => {
-      let column = 3
+    getControlElement: (column = 3) => {
       let i = 0
       let element = ''
       for (let key in levelDict) {
@@ -71,11 +65,9 @@ function GameLevel() {
           i = 0
         }
       }
-      while (i < column) {
+      while (i && i < column) {
         element += `<label class="rank-label"></label>`
-        if (++i == column) {
-          element += '</div>'
-        }
+        if (++i == column) element += '</div>'
       }
       return element
     }

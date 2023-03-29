@@ -1,5 +1,5 @@
 .nav {
-  background-color: #29b59f80;
+  background-color: #ffffff80;
   position: fixed;
   width: 100%;
   left: 0;
@@ -8,12 +8,20 @@
   font-size: 16px;
 }
 
+.nav a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 2px 5px;
+  color: black;
+  font-size: 16px;
+}
+
 .nav button {
   background-color: #29b59f50;
   border-radius: 5px;
   border: 2px solid #a2faec;
-  padding: 2px 5px;
   margin: 0;
-  font-size: 15px;
+  padding: 2px 5px;
   color: black;
+  font-size: 15px;
 }
