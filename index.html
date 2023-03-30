@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./css/modal.css">
   <script src="./js/modal.js"></script>
   <script src="./js/gameLog.js"></script>
+  <script src="./js/gameLevel.js"></script>
   <script src="./js/timer.js"></script>
   <style>
     body {
@@ -46,6 +47,15 @@
     .form-control {
       margin-left: 10px;
     }
+    
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: black;
+      width: 100%;
+      padding: 0 10px;
+    }
   </style>
 </head>
 
@@ -54,9 +64,10 @@
     <h1 class="menu" onclick="location = './saolei.html'">开始游戏</h1>
     <h1 class="menu" onclick="settingModal.show()">游戏设置</h1>
     <h1 class="menu" onclick="location = './history.html'">历史记录</h1>
-    <h1 class="menu" onclick="rankingModal.show()">最佳排行</h1>
+    <h1 class="menu" onclick="rankingModal.show()">最佳记录</h1>
     <h1 class="menu" onclick="tipModal.show()">游戏技巧</h1>
   </div>
+  <div class="footer">作者QQ：2217985811</div>
   <!-- 游戏设置模态框 -->
   <div class="modal" id="settingModal">
     <div class="modal-body">
@@ -104,29 +115,34 @@
       </div>
     </div>
   </div>
-  <!-- 最佳排行模态框 -->
+  <!-- 最佳记录模态框 -->
   <div class="modal" id="rankingModal">
     <div class="modal-body">
       <div class="modal-header">
-        <div class="modal-title">最佳排行</div>
+        <div class="modal-title">最佳记录</div>
         <div class="modal-close">关闭</div>
       </div>
-      <div class="modal-content">
-        <script>
-          let gameRanking = GameRanking()
-          let rankingData = gameRanking.get()
-          let timer = Timer()
-          for (let i in rankingData) {
-            let t = timer.format(rankingData[i])
-            document.write(`<div>${i}：${t}</div>`)
-          }
-        </script>
-      </div>
+      <div class="modal-content"></div>
     </div>
   </div>
 </body>
 <script>
-  var rankingModal = Modal('rankingModal')
+  let gameRanking = GameRanking()
+  var rankingModal = Modal('rankingModal', {
+    on_show: () => {
+      let gameLevel = GameLevel()
+      let timer = Timer()
+      let rankingData = gameRanking.get()
+      let levelDict = gameLevel.getDict()
+      let content = ''
+      for (let i in levelDict) {
+        let levelTitle = levelDict[i].title
+        let t = rankingData[levelTitle] ? timer.format(rankingData[levelTitle]) : '--:--'
+        content += `<div>${levelTitle}：${t}</div>`
+      }
+      document.querySelector('#rankingModal .modal-content').innerHTML = content
+    }
+  })
   var tipModal = Modal('tipModal')
   var settingModal = Modal('settingModal', {
     on_ok: () => {

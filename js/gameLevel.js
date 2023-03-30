@@ -45,6 +45,7 @@ function GameLevel() {
     getTitle: () => levelDict[level].title,
     getRowNum: () => levelDict[level].rowNum,
     getMineNum: () => levelDict[level].mineNum,
+    getDict: () => levelDict,
     get: () => level,
     set: (lev) => {
       level = lev
