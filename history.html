@@ -4,9 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>历史记录</title>
   <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/footer.css">
   <script src="./js/gameLog.js"></script>
   <style>
     body {
@@ -19,14 +21,14 @@
       margin: 0;
       padding: 10px;
     }
-    
+
     .list {
       margin: 0;
       padding: 0;
       overflow: auto;
       color: white;
     }
-    
+
     .list-item {
       padding: 5px 10px;
       margin: 0 0 10px 0;
@@ -34,9 +36,16 @@
       border-radius: 5px;
       border: 1px solid #a2faec;
     }
-    
+
     .list-header {
       display: flex;
+    }
+
+    .empty {
+      display: none;
+      text-align: center;
+      margin-top: 50px;
+      color: white;
     }
   </style>
 </head>
@@ -44,8 +53,11 @@
 <body>
   <nav class="nav">
     <a>历史记录（近30条）</a>
-    <a style="float:right;margin-right: 20px;" href="javascript:history.back();">返回</a>
+    <a style="float:right;margin-right: 20px;"
+      href="javascript:history.length > 1 ? history.back() : location='./index.html';">返回</a>
   </nav>
+  <div class="empty">--暂无数据--</div>
+  <div class="footer">作者QQ：2217985811</div>
   <ul class="list" style="list-style:none"></ul>
 </body>
 <script src="./js/timer.js"></script>
@@ -55,9 +67,11 @@
   listElement.style.marginTop = (document.querySelector('.nav').scrollHeight) + 'px'
   let timer = Timer()
   let content = ''
-  GameHistory().get().reverse().forEach(e => {
+  let datalist = GameHistory().get()
+  if (datalist.length) datalist.reverse().forEach(e => {
     content += createItem(e)
   });
+  else document.querySelector('.empty').style.display = 'block'
   listElement.innerHTML = content
 
   function createItem(item) {

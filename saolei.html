@@ -4,10 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>美女扫雷</title>
   <link rel="stylesheet" href="./css/nav.css">
   <link rel="stylesheet" href="./css/modal.css">
+  <link rel="stylesheet" href="./css/footer.css">
   <script src="./js/modal.js"></script>
   <script src="./js/game.js"></script>
   <script src="./js/timer.js"></script>
@@ -21,7 +23,7 @@
       padding: 5px;
       user-select: none;
     }
-    
+
     .block {
       flex: 1;
       border: 1px solid white;
@@ -32,11 +34,11 @@
       font-size: 18px;
       transition: all .2s linear;
     }
-    
+
     #gameMap {
       margin-bottom: 80px;
     }
-    
+
     .menu {
       background-color: rgba(141, 217, 237, 0.7);
       display: flex;
@@ -48,7 +50,7 @@
       width: calc(100% - 10px);
       box-sizing: border-box;
     }
-    
+
     .menu button {
       flex: 1;
       border: 3px solid transparent;
@@ -58,32 +60,32 @@
       font-size: large;
       color: black;
     }
-    
+
     .menu>button.active {
       border-color: #1cd44a;
     }
-    
+
     #esayControl.active {
       border-color: #0f6de7;
     }
-    
+
     #stateElement {
       text-align: center;
       font-size: 22px;
       padding: 20px;
       color: green;
     }
-    
+
     .nav span {
       margin: 0 3px;
     }
-    
+
     .row {
       display: flex;
       width: 100%;
       padding: 5px 0;
     }
-    
+
     .rank-label {
       flex: 1;
       text-align: center;
@@ -99,7 +101,7 @@
     <button id="rankElement">入门</button>
     <span id="countElement">33128</span> 最佳
     <span id="rankingElement">00:00</span>
-    <button style="float:right;margin-right: 20px;" onclick="history.back()">返回</button>
+    <button style="float:right" onclick="history.length > 1 ? history.back() : location='./index.html'">返回</button>
   </nav>
   <!-- 游戏主区域 -->
   <div id="gameMap"></div>
@@ -107,7 +109,7 @@
   <div class="menu">
     <button class="operate active">翻开</button>
     <button class="operate">插旗</button>
-    <button id="esayControl" class="active">辅助</button>
+    <!-- <button id="esayControl" class="active">辅助</button> -->
   </div>
   <!-- 等级选择模态框 -->
   <div class="modal" id="rankModal">
@@ -145,6 +147,7 @@
       </div>
     </div>
   </div>
+  <div class="footer">作者QQ：2217985811</div>
 </body>
 <script>
   let gameHistory = GameHistory()
@@ -197,10 +200,10 @@
   })
 
   var easy = true
-  esayControl.onclick = () => {
-    esayControl.className = easy ? '' : 'active';
-    easy = !easy
-  }
+  // esayControl.onclick = () => {
+  //   esayControl.className = easy ? '' : 'active';
+  //   easy = !easy
+  // }
 
   let gameMapElement = document.getElementById('gameMap')
   gameMapElement.style.marginTop = (document.querySelector('.nav').scrollHeight + 10) + 'px' // 距离顶部导航栏10px
@@ -254,7 +257,7 @@
       for (let j = 0; j < colNum; ++j) {
         let blockElement = document.createElement('div')
         blockElement.classList.add('block')
-        blockElement.addEventListener('click', function(e) {
+        blockElement.addEventListener('click', function (e) {
           if (game.params.state) return
           if (operation) {
             game.flag(i, j)
