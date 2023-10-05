@@ -44,14 +44,17 @@ function GameHistory() {
       isNew = GameRanking().push(rank, timeCount)
     }
     let gameHistories = get()
-    gameHistories.push({
+    let gameInfo = {
       date: new Date(+new Date() + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, ''),
       rank,
       state,
       timeCount,
       isNew
-    })
+    }
+    gameHistories.push(gameInfo)
     localStorage.setItem('gameHistories', JSON.stringify(gameHistories.slice(-30)))
+
+    return gameInfo
   }
 
   return {

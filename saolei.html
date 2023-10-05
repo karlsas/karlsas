@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>美女扫雷</title>
   <link rel="stylesheet" href="./css/nav.css">
   <link rel="stylesheet" href="./css/modal.css">
@@ -23,7 +22,7 @@
       padding: 5px;
       user-select: none;
     }
-
+    
     .block {
       flex: 1;
       border: 1px solid white;
@@ -34,11 +33,11 @@
       font-size: 18px;
       transition: all .2s linear;
     }
-
+    
     #gameMap {
       margin-bottom: 80px;
     }
-
+    
     .menu {
       background-color: rgba(141, 217, 237, 0.7);
       display: flex;
@@ -50,7 +49,7 @@
       width: calc(100% - 10px);
       box-sizing: border-box;
     }
-
+    
     .menu button {
       flex: 1;
       border: 3px solid transparent;
@@ -60,32 +59,32 @@
       font-size: large;
       color: black;
     }
-
+    
     .menu>button.active {
       border-color: #1cd44a;
     }
-
+    
     #esayControl.active {
       border-color: #0f6de7;
     }
-
+    
     #stateElement {
       text-align: center;
       font-size: 22px;
       padding: 20px;
       color: green;
     }
-
+    
     .nav span {
       margin: 0 3px;
     }
-
+    
     .row {
       display: flex;
       width: 100%;
       padding: 5px 0;
     }
-
+    
     .rank-label {
       flex: 1;
       text-align: center;
@@ -147,7 +146,7 @@
       </div>
     </div>
   </div>
-  <div class="footer">作者QQ：2217985811</div>
+  <div class="footer"></div>
 </body>
 <script>
   let gameHistory = GameHistory()
@@ -200,10 +199,10 @@
   })
 
   var easy = true
-  // esayControl.onclick = () => {
-  //   esayControl.className = easy ? '' : 'active';
-  //   easy = !easy
-  // }
+    // esayControl.onclick = () => {
+    //   esayControl.className = easy ? '' : 'active';
+    //   easy = !easy
+    // }
 
   let gameMapElement = document.getElementById('gameMap')
   gameMapElement.style.marginTop = (document.querySelector('.nav').scrollHeight + 10) + 'px' // 距离顶部导航栏10px
@@ -250,6 +249,7 @@
     game = Game(rowNum, colNum, level.getMineNum())
     countElement.innerText = game.params.count
 
+    let firstClick = true
     for (let i = 0; i < rowNum; ++i) {
       let rowDiv = document.createElement('div')
       blockMap[i] = []
@@ -257,20 +257,27 @@
       for (let j = 0; j < colNum; ++j) {
         let blockElement = document.createElement('div')
         blockElement.classList.add('block')
-        blockElement.addEventListener('click', function (e) {
+        blockElement.addEventListener('click', function(e) {
           if (game.params.state) return
-          if (operation) {
-            game.flag(i, j)
-          } else {
-            game.openBlock(i, j, easy)
+          while (true) {
+            if (operation) {
+              game.flag(i, j)
+            } else {
+              game.openBlock(i, j, easy)
+            }
+            if (firstClick && game.params.state === 1) {
+              // 首次点击就点到雷，则重构
+              game = Game(rowNum, colNum, level.getMineNum())
+            } else break
           }
+          firstClick = false
           render(game.get())
           countElement.innerText = game.params.count
           if (game.params.state) {
             timer.stop()
-            gameHistory.push(level.getTitle(), game.params.state, timer.get())
+            let gameInfo = gameHistory.push(level.getTitle(), game.params.state, timer.get())
             rankingElement.innerText = timer.format(gameRanking.get()[level.getTitle()])
-            renderGameOver(game.params.state)
+            renderGameOver(gameInfo)
           }
         })
         rowDiv.appendChild(blockElement)
@@ -296,13 +303,13 @@
     timer.start(true)
   }
 
-  function renderGameOver(state) {
+  function renderGameOver(gameInfo) {
     let stateElement = document.getElementById('stateElement')
-    if (state == 1) {
+    if (gameInfo.state == 1) {
       stateElement.innerText = '失败！'
       stateElement.style.color = 'red'
     } else {
-      stateElement.innerText = '胜利！'
+      stateElement.innerText = gameInfo.isNew ? '新纪录！' : '胜利！'
       stateElement.style.color = 'green'
     }
     resultModal.show()
