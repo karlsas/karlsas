@@ -204,6 +204,13 @@
     //   easy = !easy
     // }
 
+  let showPercentage = localStorage.getItem('showPercentage') == 'true'
+  countElement.onclick = function() {
+    showPercentage = !showPercentage
+    localStorage.setItem('showPercentage', showPercentage)
+    renderCountNum(game.params)
+  }
+
   let gameMapElement = document.getElementById('gameMap')
   gameMapElement.style.marginTop = (document.querySelector('.nav').scrollHeight + 10) + 'px' // 距离顶部导航栏10px
   let blockMap, blockWidth
@@ -239,6 +246,16 @@
     }
   }
 
+  function renderCountNum(params) {
+    if (!showPercentage) {
+      countElement.innerText = params.count
+      return
+    }
+
+    let denominator = game.params.row * game.params.col - game.params.mine
+    countElement.innerText = (params.count / denominator * 100).toFixed(2) + '%'
+  }
+
   function gameStart() {
     rankingElement.innerText = timer.format(gameRanking.get()[level.getTitle()])
     blockMap = []
@@ -247,7 +264,7 @@
 
     let rowNum = level.getRowNum()
     game = Game(rowNum, colNum, level.getMineNum())
-    countElement.innerText = game.params.count
+    renderCountNum(game.params)
 
     let firstClick = true
     for (let i = 0; i < rowNum; ++i) {
@@ -272,7 +289,7 @@
           }
           firstClick = false
           render(game.get())
-          countElement.innerText = game.params.count
+          renderCountNum(game.params)
           if (game.params.state) {
             timer.stop()
             let gameInfo = gameHistory.push(level.getTitle(), game.params.state, timer.get())

@@ -15,6 +15,7 @@
       border: 0;
       margin: 0;
       padding: 10px;
+      padding-top: 0;
     }
     
     .list {
@@ -57,16 +58,24 @@
 <script src="./js/timer.js"></script>
 <script src="./js/gameLog.js"></script>
 <script>
-  let listElement = document.querySelector('.list')
-  listElement.style.marginTop = (document.querySelector('.nav').scrollHeight) + 'px'
   let timer = Timer()
   let content = ''
   let datalist = GameHistory().get()
-  if (datalist.length) datalist.reverse().forEach(e => {
-    content += createItem(e)
-  });
-  else document.querySelector('.empty').style.display = 'block'
-  listElement.innerHTML = content
+  if (!datalist.length) {
+    document.querySelector('.empty').style.display = 'block'
+  } else {
+    datalist.reverse().forEach(e => {
+      content += createItem(e)
+    });
+
+    let listElement = document.querySelector('.list')
+    listElement.innerHTML = content
+
+    let fillElement = document.createElement('li')
+    fillElement.style.height = (document.querySelector('.nav').scrollHeight + 10) + 'px'
+    fillElement.style.width = '100%'
+    listElement.insertBefore(fillElement, listElement.children[0])
+  }
 
   function createItem(item) {
     let time = timer.format(item.timeCount)
