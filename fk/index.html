@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: green;
+    }
+    
+    #map {
+      margin: 10px 0;
+    }
+    
+    .block {
+      flex: 1;
+      border: 1px solid white;
+      background-color: #29b59f;
+    }
+    
+    .block2 {
+      flex: 1;
+      border: 1px solid white;
+      background-color: yellow;
+    }
+    
+    .null {
+      flex: 1;
+      border: 1px solid transparent;
+      background-color: transparent;
+    }
+    
+    .preview {
+      flex: 1;
+      border: 1px solid black;
+      background-color: black;
+    }
+    
+    #c,
+    #i {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 24px;
+      color: white;
+    }
+    
+    .choies,
+    #i>div {
+      border: 1px solid white;
+      width: 30%;
+      height: 100px;
+      display: flex;
+    }
+    
+    .choies>div,
+    #next>div {
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="i">
+    <div id="grade"></div>
+    <div id="time"></div>
+    <div id="next"></div>
+  </div>
+  <div id="map"></div>
+  <div id="c">
+    <div class="choies"></div>
+    <div class="choies"></div>
+    <div class="choies"></div>
+  </div>
+</body>
+<script>
+  // 消除页面默认滑动行为
+  document.addEventListener('touchstart', function(e) {
+    e.preventDefault()
+  }, {
+    passive: false
+  });
+  document.addEventListener('touchmove', function(e) {
+    e.preventDefault()
+  }, {
+    passive: false
+  });
+</script>
+<script src="./js/block.js"></script>
+<script src="./js/game.js"></script>
+<script>
+  let game = Game();
+  let blockMap = [];
+  let blockWidth;
+  let previewArr = [];
+
+  for (let i = 0; i < game.map.length; ++i) {
+    let rowDiv = document.createElement('div')
+    blockMap[i] = []
+    rowDiv.style.display = 'flex'
+    for (let j = 0; j < game.map[0].length; ++j) {
+      let blockElement = document.createElement('div')
+      blockElement.classList.add('block')
+      rowDiv.appendChild(blockElement)
+      blockMap[i][j] = blockElement
+    }
+    map.appendChild(rowDiv)
+  }
+
+  blockWidth = blockMap[0][0].scrollWidth
+  for (let i = 0; i < game.map.length; ++i) {
+    for (let j = 0; j < game.map[0].length; ++j) {
+      blockMap[i][j].style.height = blockWidth + 'px'
+    }
+  }
+
+  let mapRect = blockMap[0][0].getBoundingClientRect()
+  let moveBlock = null;
+  let currentBlocks = [Block(), Block(), Block()]
+  let currentBlockElements = currentBlocks.map((e, i) => {
+    return createChoiesBlockElement(i)
+  })
+  let nextBlock
+  let nextBlockElement
+
+  renderGrade();
+  renderNextBlock();
+
+  let countTime = 5
+  time.innerText = countTime
+  let timeInterval = setInterval(() => {
+    if (!--countTime) {
+      game.setState(1)
+      clearMoveBlock()
+      clearPreview()
+      clearInterval(timeInterval)
+      timeInterval = null
+      currentBlockElements.forEach(e => (e.style.display = 'block'))
+    }
+    time.innerText = countTime
+  }, 1000);
+
+  document.querySelectorAll('.choies').forEach((e, i) => {
+    e.appendChild(currentBlockElements[i])
+    e.addEventListener('touchend', function(event) {
+      if (game.getState()) return
+
+      if (moveBlock) {
+        clearPreview();
+        clearMoveBlock();
+
+        let position = getPosition(event, i)
+
+        if (!game.update(position.x, position.y, currentBlocks[i].body)) {
+          // 无效操作，显示当前方块
+          currentBlockElements[i].style.display = 'block'
+          return
+        }
+
+        // 将当前方块更新为下一个方块
+        currentBlocks[i] = nextBlock
+        e.removeChild(currentBlockElements[i])
+        currentBlockElements[i] = createChoiesBlockElement(i)
+        e.appendChild(currentBlockElements[i])
+
+        // 若所有方块都无法放入，则清空地图
+        if (game.no(currentBlocks)) game.clearMap();
+
+        renderMap();
+        renderGrade()
+        renderNextBlock()
+      } else {
+        // 旋转方块
+        currentBlocks[i].body = rotate(currentBlocks[i].body)
+        e.removeChild(currentBlockElements[i])
+        currentBlockElements[i] = createChoiesBlockElement(i)
+        e.appendChild(currentBlockElements[i])
+      }
+    })
+
+    e.addEventListener('touchmove', function(event) {
+      if (game.getState()) {
+        clearPreview();
+        clearMoveBlock();
+        return
+      }
+
+      let position = getPosition(event, i)
+      renderMoveBlock(position.left, position.top, i)
+      renderPreview(position.x, position.y, i)
+    })
+  })
+
+  function createBlockElement(body, unit) {
+    let block = document.createElement('div')
+    block.style.width = body[0].length * unit + 'px'
+    for (let i = 0; i < body.length; ++i) {
+      let rowDiv = document.createElement('div')
+      rowDiv.style.display = 'flex'
+      for (let j = 0; j < body[0].length; ++j) {
+        let blockElement = document.createElement('div')
+        blockElement.classList.add(body[i][j] == 0 ? 'null' : 'block2')
+        blockElement.style.height = unit + 'px'
+        rowDiv.appendChild(blockElement)
+      }
+      block.appendChild(rowDiv)
+    }
+    return block
+  }
+
+  function createChoiesBlockElement(i) {
+    return createBlockElement(currentBlocks[i].body, 0.5 * blockWidth)
+  }
+
+  function renderNextBlock() {
+    if (nextBlockElement) next.removeChild(nextBlockElement)
+    nextBlock = Block()
+    nextBlockElement = createBlockElement(nextBlock.body, 0.5 * blockWidth)
+    next.appendChild(nextBlockElement)
+  }
+
+  function renderMoveBlock(left, top, i) {
+    if (!moveBlock) {
+      moveBlock = createBlockElement(currentBlocks[i].body, blockWidth)
+      moveBlock.style.position = 'absolute'
+      map.appendChild(moveBlock)
+
+      // 隐藏所选方块
+      currentBlockElements[i].style.display = 'none'
+    }
+
+    moveBlock.style.left = left
+    moveBlock.style.top = top
+  }
+
+  function clearMoveBlock() {
+    if (moveBlock) {
+      map.removeChild(moveBlock)
+      moveBlock = null
+    }
+  }
+
+  function renderPreview(x, y, i) {
+    clearPreview();
+    previewArr = game.preview(x, y, currentBlocks[i].body);
+    previewArr.forEach(e => {
+      let [i, j] = e;
+      blockMap[i][j].classList.add('preview')
+    })
+  }
+
+  function clearPreview() {
+    previewArr.forEach(e => {
+      let [i, j] = e;
+      blockMap[i][j].classList.remove('preview')
+    })
+    previewArr = []
+  }
+
+  function renderMap() {
+    for (let i = 0; i < game.map.length; ++i) {
+      for (let j = 0; j < game.map[0].length; ++j) {
+        blockMap[i][j].classList.add(game.map[i][j] ? 'block2' : 'block');
+        blockMap[i][j].classList.remove(game.map[i][j] ? 'block' : 'block2');
+      }
+    }
+  }
+
+  function renderGrade() {
+    grade.innerText = game.getGrade()
+  }
+
+  function getPosition(event, i) {
+    let left = event.changedTouches[0].clientX - currentBlocks[i].body[0].length * blockWidth
+    let top = event.changedTouches[0].clientY - currentBlocks[i].body.length * blockWidth
+    let y = Math.floor((left + mapRect.width / 2 - mapRect.x) / mapRect.width)
+    let x = Math.floor((top + mapRect.height / 2 - mapRect.y) / mapRect.height)
+    return {
+      x,
+      y,
+      left: left + 'px',
+      top: top + 'px'
+    }
+  }
+</script>
+
+</html>
