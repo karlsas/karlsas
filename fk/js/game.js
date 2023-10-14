@@ -131,13 +131,29 @@ function Game() {
    */
   function no(blocks) {
     for (let i = 0; i < blocks.length; ++i) {
-      for (let x = 0; x < map.length; ++x) {
-        for (let y = 0; y < map[0].length; ++y) {
-          if (check(x, y, blocks[i].body)) return false
+      let body = blocks[i].getBody()
+      for (let n = 0; n < 4; ++n) {
+        body = rotateBlock(body)
+        for (let x = 0; x < map.length; ++x) {
+          for (let y = 0; y < map[0].length; ++y) {
+            if (check(x, y, body)) return false
+          }
         }
       }
     }
     return true
+  }
+
+  function rotateBlock(blockBody) {
+    let newBody = [];
+    for (let i = 0; i < blockBody[0].length; ++i) {
+      let arr = [];
+      for (let j = blockBody.length - 1; j >= 0; --j) {
+        arr.push(blockBody[j][i])
+      }
+      newBody.push(arr)
+    }
+    return newBody
   }
 
   return {

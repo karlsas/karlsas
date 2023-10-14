@@ -1,18 +1,9 @@
-function rotate(block) {
-  let newBlock = [];
-  for (let i = 0; i < block[0].length; ++i) {
-    let arr = [];
-    for (let j = block.length - 1; j >= 0; --j) {
-      arr.push(block[j][i])
-    }
-    newBlock.push(arr)
-  }
-
-  return newBlock
-}
-
 function Block() {
   let blocks = [
+    [
+      [1, 1],
+      [1, 1]
+    ],
     [
       [1, 0],
       [1, 0],
@@ -76,10 +67,23 @@ function Block() {
   let body = blocks[Math.floor(Math.random() * blocks.length)].concat();
 
   for (let i = 0; i < Math.floor(Math.random() * 4); ++i) {
-    body = rotate(body)
+    rotate()
+  }
+
+  function rotate() {
+    let newBody = [];
+    for (let i = 0; i < body[0].length; ++i) {
+      let arr = [];
+      for (let j = body.length - 1; j >= 0; --j) {
+        arr.push(body[j][i])
+      }
+      newBody.push(arr)
+    }
+    body = newBody
   }
 
   return {
-    body
+    rotate,
+    getBody: () => (body),
   }
 }

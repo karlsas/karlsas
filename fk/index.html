@@ -20,21 +20,19 @@
       background-color: #29b59f;
     }
     
-    .block2 {
-      flex: 1;
-      border: 1px solid white;
-      background-color: yellow;
-    }
-    
-    .null {
+    .block0 {
       flex: 1;
       border: 1px solid transparent;
       background-color: transparent;
     }
     
-    .preview {
+    .block1 {
       flex: 1;
-      border: 1px solid black;
+      border: 1px solid white;
+      background-color: yellow;
+    }
+    
+    .preview {
       background-color: black;
     }
     
@@ -153,7 +151,7 @@
 
         let position = getPosition(event, i)
 
-        if (!game.update(position.x, position.y, currentBlocks[i].body)) {
+        if (!game.update(position.x, position.y, currentBlocks[i].getBody())) {
           // 无效操作，显示当前方块
           currentBlockElements[i].style.display = 'block'
           return
@@ -173,7 +171,7 @@
         renderNextBlock()
       } else {
         // 旋转方块
-        currentBlocks[i].body = rotate(currentBlocks[i].body)
+        currentBlocks[i].rotate()
         e.removeChild(currentBlockElements[i])
         currentBlockElements[i] = createChoiesBlockElement(i)
         e.appendChild(currentBlockElements[i])
@@ -201,7 +199,7 @@
       rowDiv.style.display = 'flex'
       for (let j = 0; j < body[0].length; ++j) {
         let blockElement = document.createElement('div')
-        blockElement.classList.add(body[i][j] == 0 ? 'null' : 'block2')
+        blockElement.className = 'block' + body[i][j]
         blockElement.style.height = unit + 'px'
         rowDiv.appendChild(blockElement)
       }
@@ -211,19 +209,19 @@
   }
 
   function createChoiesBlockElement(i) {
-    return createBlockElement(currentBlocks[i].body, 0.5 * blockWidth)
+    return createBlockElement(currentBlocks[i].getBody(), 0.5 * blockWidth)
   }
 
   function renderNextBlock() {
     if (nextBlockElement) next.removeChild(nextBlockElement)
     nextBlock = Block()
-    nextBlockElement = createBlockElement(nextBlock.body, 0.5 * blockWidth)
+    nextBlockElement = createBlockElement(nextBlock.getBody(), 0.5 * blockWidth)
     next.appendChild(nextBlockElement)
   }
 
   function renderMoveBlock(left, top, i) {
     if (!moveBlock) {
-      moveBlock = createBlockElement(currentBlocks[i].body, blockWidth)
+      moveBlock = createBlockElement(currentBlocks[i].getBody(), blockWidth)
       moveBlock.style.position = 'absolute'
       map.appendChild(moveBlock)
 
@@ -244,7 +242,7 @@
 
   function renderPreview(x, y, i) {
     clearPreview();
-    previewArr = game.preview(x, y, currentBlocks[i].body);
+    previewArr = game.preview(x, y, currentBlocks[i].getBody());
     previewArr.forEach(e => {
       let [i, j] = e;
       blockMap[i][j].classList.add('preview')
@@ -262,8 +260,7 @@
   function renderMap() {
     for (let i = 0; i < game.map.length; ++i) {
       for (let j = 0; j < game.map[0].length; ++j) {
-        blockMap[i][j].classList.add(game.map[i][j] ? 'block2' : 'block');
-        blockMap[i][j].classList.remove(game.map[i][j] ? 'block' : 'block2');
+        blockMap[i][j].className = 'block' + (game.map[i][j] ? game.map[i][j] : '')
       }
     }
   }
@@ -273,8 +270,8 @@
   }
 
   function getPosition(event, i) {
-    let left = event.changedTouches[0].clientX - currentBlocks[i].body[0].length * blockWidth
-    let top = event.changedTouches[0].clientY - currentBlocks[i].body.length * blockWidth
+    let left = event.changedTouches[0].clientX - currentBlocks[i].getBody()[0].length * blockWidth
+    let top = event.changedTouches[0].clientY - currentBlocks[i].getBody().length * blockWidth
     let y = Math.floor((left + mapRect.width / 2 - mapRect.x) / mapRect.width)
     let x = Math.floor((top + mapRect.height / 2 - mapRect.y) / mapRect.height)
     return {
